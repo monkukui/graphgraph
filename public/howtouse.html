@@ -1,0 +1,162 @@
+<!doctype HTML>
+
+<html lang="ja">
+    <head>
+        <!-- 由来は「なんで二回言うねん」 -->
+        <title> GRAPH × GRAPH </title>
+        
+        <!-- iOS 用 -->
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <!-- <link href="/public/css/bootstrap.min.css" rel="stylesheet"> -->
+
+        <!-- jQuery -->
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+        <!-- bootstrap to js -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" 
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        
+        <!-- bootstrap to css -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <!-- フォント関連(bootstrap を有効にする必要あり -->
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,400,700" rel="stylesheet" type="text/css">
+        
+        
+        <!-- 数式表記ライブラリ MathML -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+        <!-- base.css を読み込む -->
+        <link href="css/base.css" rel="stylesheet">
+        
+        <!-- base.js を読み込む -->
+        <script src="js/base.js"></script>
+
+    </head>
+
+    <body>
+        <div id="main-div" class="float-container">
+        
+            <!-- navigation start -->
+            <nav class="navbar fixed-top navbar-dark bg-dark navbar-fixed-top" -->
+                <a class="navbar-brand" href="index.html"> GRAPH <strong>×</strong> GRAPH </a>
+        
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html"> このページについて </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="howtouse.html">使い方<span class="dr-only"></span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#"> アルゴリズム(準備中) </a>
+                        </li>
+                        
+                        <!--
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">piyo</a>
+                                <a class="dropdown-item" href="#">Another piyo</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">foo</a>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#">bar</a>
+                        </li>
+                        -->
+                    </ul>
+                </div>
+            </nav>
+            <!-- navigation end -->
+
+            <div class="page-header">
+                <h1> GRAPH <strong>×</strong> GRAPH <font size="3">ver.1.1.1</font></h1>
+            </div>
+            <div class="dropdown-divider"></div>
+                
+                <h2> ボタンの説明 </h2>
+                <p> このボタンでは, 頂点にラベルづけされる整数が, 0 から始まるか 1 から始まるかを選択します. </p>
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceIndex" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 1-indexed </button>
+                <div class="dropdown-menu" aria-labelledby="preferenceIndex">
+                    <button class="dropdown-item" type="button" onclick="message0();"> 0-indexed </button>
+                    <button class="dropdown-item" type="button" onclick="message0();"> 1-indexed </button>
+                </div>
+                </div>
+                
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p> このボタンでは, 有向グラフを扱うか無向グラフを扱うかを選択します. </p>
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceDirected" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> undirected </button>
+                <div class="dropdown-menu" aria-labelledby="preferenceDirected">
+                    <button class="dropdown-item" type="button" onclick="message0();"> undirected </button>
+                    <button class="dropdown-item" type="button" onclick="message0();"> directed </button>
+                </div>
+                </div>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p> このボタンでは, 辺に重みをつけるかつけないかを選択します. </p>
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceWeight" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> unweighted </button>
+                <div class="dropdown-menu" aria-labelledby="preferenceWeight">
+                    <button class="dropdown-item" type="button" onclick="message0();"> unweighted </button>
+                    <button class="dropdown-item" type="button" onclick="message0();"> weighted </button>
+                </div>
+                </div>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p> このボタンでは, 入力を normal 形式で与えるか matrix 形式で与えるかを選択します. </p>
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceFormat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> normal </button>
+                <div class="dropdown-menu" aria-labelledby="preferenceFormat">
+                    <button class="dropdown-item" type="button" onclick="message0();"> normal </button>
+                    <button class="dropdown-item" type="button" onclick="message0();"> matrix </button>
+                </div>
+                </div>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p> 最後にこのボタンを押すと, 入力が読み込まれグラフが出力されます.</p>
+                <button type="button" class="btn btn-primary" onclick="message0();">IMPORT</button>
+
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <h2> Tips </h2>
+                入力欄を空にしておくと, 入力例が薄く表示されます. </br>
+                入力欄が空状態で <button type="button" class="btn btn-primary" onclick="message0();">IMPORT</button> ボタンを押すと, 入力例がそのまま読み込まれます.</br>
+                まずは色々試してみてください </br>
+
+            <div id="footer"><small>Copyright (c) monkukui All Rights Reserved.</small></div>
+        </div>
+    </body>
+</html>

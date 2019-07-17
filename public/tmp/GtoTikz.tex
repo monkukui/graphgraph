@@ -1,0 +1,15 @@
+\documentclass[dvipdfmx]{standalone}
+\usepackage{tikz}
+
+\tikzset{
+    elem\.style={
+        circle, 
+        minimum size= 3mm,
+    }
+}
+\begin{document}
+\begin{tikzpicture}
+    \node(a1) [elem] at (0,0) {$1$};
+    \node(a2) [elem] at (1,1) {$2$};
+\end{tikzpicture}
+\end{document}
