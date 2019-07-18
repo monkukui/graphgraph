@@ -125,6 +125,7 @@ function validator(str){
     
     // NaN が入っていたらだめ
     for(let i = 0; i < str.length; i++) if(isNaN(str[i])){
+
         console.log("129");
         message1();
         return;
