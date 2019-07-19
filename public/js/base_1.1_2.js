@@ -7,7 +7,6 @@ function Pair(first, second){
     this.second = second;
 }
 
-let INF = 100100100;
 
 // グローバル変数をここに宣言する (これって作法的にどうなの?)
 let howindexed;     // 0-indexed : 0, 1-indexed: 1
@@ -15,20 +14,6 @@ let isweighted;     // unweighted: 0, weighted : 1
 let isdirected;     // undirected: 0, directed : 1
 let howformat;      // normal:     0, matrix   : 1
 
-// グラフの隣接リスト表現
-// (to, cost)
-// 無向グラフの場合は cost = 1
-let adjList;
-
-// 全点対最短経路
-// 負の閉路が存在する場合は -2
-let distance;
-
-
-// 木の直径
-// distance[i][j] の最大値と定義
-// TODO 綴りの確認
-let treeDiameter;
 
 // ページ読み込み時に実行される関数 
 $(document).ready( function(){
@@ -243,61 +228,6 @@ function validator(str){
     return;
 }
 
-function culcDist(){
-    let V = adjList.length;
-    
-        
-    // distance をよしなに初期化
-    distance = new Array(V);
-    for(let i = 0; i < V; i++) distance[i] = new Array(V);
-    for(let i = 0; i < V; i++){
-        for(let j = 0; j < V; j++){
-            if(i != j) distance[i][j] = INF;
-            else distance[i][j] = 0;
-        }
-    }
-
-    for(let i = 0; i < V; i++){
-        for(let j = 0; j < adjList[i].length; j++){
-            let a = i;
-            let b = adjList[i][j].first;
-            let c = adjList[i][j].second;
-            distance[a][b] = c;
-        }
-    }
-
-    
-
-    // ワーシャルフロイド で全点対最短経路を解く
-    for(let k = 0; k < V; k++){
-        for(let i = 0; i < V; i++){
-            for(let j = 0; j < V; j++){
-                let val = distance[i][k] + distance[k][j];
-                if(distance[i][j] > val) distance[i][j] = val;
-            }
-        }
-    }
-    
-    // 負の閉路検出
-    // distance[i][j] < 0 となる i が存在　<=> 負の閉路が存在
-    let negativeCycle = 0;
-    for(let i = 0; i < V; i++){
-        if(distance[i][i] < 0) negativeCycle = 1;
-    }
-
-    if(negativeCycle) distance = -2;
-
-    treeDiameter = -INF;
-    for(let i = 0; i < V; i++){
-        for(let j = 0; j < V; j++){
-            let val = distance[i][j];
-            if(treeDiameter < val) treeDiameter = val;
-        }
-    }
-    
-    console.log(distance);
-}
-
 function inputToGraph(){
     
     let nodeList = [];
@@ -327,7 +257,7 @@ function inputToGraph(){
     let E = str[1];
 
     // 隣接行列表現
-    adjList = new Array(V);
+    let adjList = new Array(V);
     for(let i = 0; i < V; i++) adjList[i] = new Array(0);
     
     
@@ -434,7 +364,6 @@ function inputToGraph(){
     };
     
     let network = new vis.Network(container, data, options);
-    culcDist();
 }
 
 
