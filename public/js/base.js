@@ -146,26 +146,24 @@ function validator(str){
     
     // NaN が入っていたらだめ
     for(let i = 0; i < str.length; i++) if(isNaN(str[i])){
-    
-        printDanger("入力に予期せぬ値が含まれたいます")
+        printDanger("入力に予期せぬ値が含まれたいます.")
         return;
-    }; 
-   
+    };
+
 
     if(howformat){  
         
         // 隣接行列
-
         let n = str[0];
         
         // 必要な数だけ入力があるかどうか
         if(n * n + 1 < str.length){
-            printDanger("入力が多すぎます");
+            printDanger("入力が多すぎます.");
             return;
         }
 
         if(n * n + 1 > str.length){
-            printDanger("入力が足りていません"); 
+            printDanger("入力が足りていません."); 
             return;   
         }
 
@@ -173,7 +171,7 @@ function validator(str){
         if(!isweighted){
             for(let i = 1; i < str.length; i++){
                 if(!(str[i] == 1 || str[i] == 0)){
-                    printDanger("「辺がある : 1,   辺がない : 0 」 と入力してください")
+                    printDanger("「辺がある : 1,   辺がない : 0 」 と入力してください.")
                     return;
                 }
             }
@@ -247,7 +245,7 @@ function validator(str){
             }
             
             if(a < 0 || b < 0 || n <= a || n <= b){
-                printDanger("存在しない頂点を指定しています");
+                printDanger("存在しない頂点を指定しています.");
                 return;
             }
         }
@@ -257,9 +255,8 @@ function validator(str){
 }
 
 function culcDist(){
-    let V = adjList.length;
-    
-        
+
+    let V = adjList.length;    
     // distance をよしなに初期化
     distance = new Array(V);
     for(let i = 0; i < V; i++) distance[i] = new Array(V);
@@ -278,8 +275,6 @@ function culcDist(){
             distance[a][b] = c;
         }
     }
-
-    
 
     // ワーシャルフロイド で全点対最短経路を解く
     for(let k = 0; k < V; k++){
@@ -311,8 +306,16 @@ function culcDist(){
     console.log(distance);
 }
 
+$(element).on("click keydown", function(e) {
+    console.log("huga");
+	if(typeof e.keyCode === "undefined" || e.keyCode === 13) {
+    	/* なんらかの動作 */
+	    console.log("hoge");
+    }
+});
+
 function inputToGraph(){
-    
+
     $('#inputValidator').empty();
     let nodeList = [];
     let edgeList = [];
@@ -395,7 +398,6 @@ function inputToGraph(){
     }
 
     /* input to adjMatrix end */
-
     // 頂点情報を追加
     for(let i = 0; i < V; i++){
         let lab;

@@ -54,6 +54,7 @@
         
         
         <!-- 数式表記ライブラリ MathML -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
         <!-- base.css を読み込む -->
@@ -110,12 +111,108 @@
             <!-- navigation end -->
 
             <div class="page-header">
-                <h1> GRAPH <strong>×</strong> GRAPH <font size="3">ver.1.1.2</font></h1>
+                <h1> GRAPH <strong>×</strong> GRAPH <font size="3">ver.1.2.1</font></h1>
             </div>
             <div class="dropdown-divider"></div>
                 
+                <h2> 入力形式 </h2>
+                <p>   
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceFormat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> normal </button>
+                </div>
+
+                形式の場合、以下のような入力を要求します.
+                </p>
+                
+                <div class="row">
+                <div class="col-sm-6">
+                <div class="card" style="width: 34rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                        <div class="btn-group">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceWeight" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> unweighted </button>
+                        </div>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">重みなしグラフの場合</h6>
+                        <hr>
+                        <p class="card-text">
+                        \(n\) \(m\)<br>
+                        \(a_1\) \(b_1\)<br>
+                        \(\vdots\)<br>
+                        \(a_m\) \(b_m\)<br>
+                        </p>
+                        <hr>
+                        <p class="card-text">\(1\) 行目に頂点数と辺数を表す \(2\) つの整数 \(n\) \(m\) を空白区切で与える.</p>
+                        <p class="card-text"> \(2\) 行目から続く \(m\) 行のうち, \(i\) 行目においては, <br>
+                        \(i\) 番目の辺を表す \(2\) つの整数 \(a_i\) \(b_i\) を空白区切で与える.</p> 
+
+                        </p>
+                    </div>
+                </div>
+                </div>
+
+                
+                <div class="col-sm-6">
+                <div class="card" style="width: 34rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                        <div class="btn-group">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceWeight" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> weighted </button>
+                        </div>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">重みなしグラフの場合</h6>
+                        <hr>
+                        <p class="card-text">
+                        \(n\) \(m\)<br>
+                        \(a_1\) \(b_1\) \(c_1\)<br>
+                        \(\vdots\)<br>
+                        \(a_m\) \(b_m\) \(c_m\)<br>
+                        </p>
+                        <hr>
+                        <p class="card-text">\(1\) 行目に頂点数と辺数を表す \(2\) つの整数 \(n\) \(m\) を空白区切で与える.</p>
+                        <p class="card-text"> \(2\) 行目から続く \(m\) 行のうち, \(i\) 行目においては, <br>
+                        \(i\) 番目の辺を表す \(3\) つの整数 \(a_i\) \(b_i\) \(c_i\) を空白区切で与える.</p> 
+
+                        </p>
+                    </div>
+                </div>
+                </div>
+                </div>
+                <br>
+                
+                <p>   
+                <div class="btn-group">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceFormat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> matrix </button>
+                </div>
+
+                形式の場合、以下のような入力を要求します.
+                </p>
+    
+                <div class="row">
+                <div class="col-sm-6">
+                <div class="card" style="width: 34rem;">
+                    <div class="card-body">
+                        <p class="card-text">
+                        \(n\)<br>
+                        \(a_{1,1}\) \(\ldots\) \(a_{1,n}\)<br>
+                        \(\vdots\)<br>
+                        \(a_{n,1}\) \(\ldots\) \(a_{n,n}\)<br>
+                        </p>
+                        <hr>
+                        <p class="card-text">\(1\) 行目に頂点数を表す \(1\) つの整数 \(n\) を与える.</p>
+                        <p class="card-text"> \(2\) 行目から続く \(m\) 行は隣接行列 \(A\) を表し,  <br>
+                        \(a_{i, j}\) は頂点 \(i\) \(j\) 間の辺の情報を表す.</p>
+
+                        </p>
+                    </div>
+                </div>
+                </div>
+                </div>
+
+                <br>
+
                 <h2> ボタンの説明 </h2>
-                <p> このボタンでは, 頂点にラベルづけされる整数が, 0 から始まるか 1 から始まるかを選択します. </p>
+                <p>
                 <div class="btn-group">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceIndex" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 1-indexed </button>
                 <div class="dropdown-menu" aria-labelledby="preferenceIndex">
@@ -123,13 +220,9 @@
                     <button class="dropdown-item" type="button" onclick="message0();"> 1-indexed </button>
                 </div>
                 </div>
+                では, 頂点にラベルづけされる整数が, 0 から始まるか 1 から始まるかを選択します. </p>
                 
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                <p> このボタンでは, 有向グラフを扱うか無向グラフを扱うかを選択します. </p>
+                <p>
                 <div class="btn-group">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceDirected" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> undirected </button>
                 <div class="dropdown-menu" aria-labelledby="preferenceDirected">
@@ -137,12 +230,9 @@
                     <button class="dropdown-item" type="button" onclick="message0();"> directed </button>
                 </div>
                 </div>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                <p> このボタンでは, 辺に重みをつけるかつけないかを選択します. </p>
+                では, 有向グラフを扱うか無向グラフを扱うかを選択します. </p>
+
+                <p>
                 <div class="btn-group">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceWeight" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> unweighted </button>
                 <div class="dropdown-menu" aria-labelledby="preferenceWeight">
@@ -150,12 +240,9 @@
                     <button class="dropdown-item" type="button" onclick="message0();"> weighted </button>
                 </div>
                 </div>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                <p> このボタンでは, 入力を normal 形式で与えるか matrix 形式で与えるかを選択します. </p>
+                では, 辺に重みをつけるかつけないかを選択します. </p>
+                
+                <p>
                 <div class="btn-group">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="preferenceFormat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> normal </button>
                 <div class="dropdown-menu" aria-labelledby="preferenceFormat">
@@ -163,23 +250,18 @@
                     <button class="dropdown-item" type="button" onclick="message0();"> matrix </button>
                 </div>
                 </div>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                <p> 最後にこのボタンを押すと, 入力が読み込まれグラフが出力されます.</p>
+                では, 入力を normal 形式で与えるか matrix 形式で与えるかを選択します. </p>
+                
+                <p> 最後に
                 <button type="button" class="btn btn-primary" onclick="message0();">IMPORT</button>
-
-                </br>
-                </br>
-                </br>
+                を押すと, 入力が読み込まれグラフが出力されます.
+                </p>
                 </br>
                 </br>
                 <h2> Tips </h2>
                 入力欄を空にしておくと, 入力例が薄く表示されます. </br>
                 入力欄が空状態で <button type="button" class="btn btn-primary" onclick="message0();">IMPORT</button> ボタンを押すと, 入力例がそのまま読み込まれます.</br>
-                まずは色々試してみてください </br>
+                まずは色々試してみてください.</br>
 
             <div id="footer"><small>Copyright (c) monkukui All Rights Reserved.</small></div>
         </div>
