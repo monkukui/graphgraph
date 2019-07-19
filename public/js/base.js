@@ -240,6 +240,7 @@ function validator(str){
         }
     }
 
+
     return;
 }
 
@@ -294,7 +295,7 @@ function culcDist(){
             if(treeDiameter < val) treeDiameter = val;
         }
     }
-    
+    console.log(treeDiameter);
     console.log(distance);
 }
 
