@@ -32,10 +32,13 @@ let treeDiameter;
 // ページ読み込み時に実行される関数 
 $(document).ready( function(){
     // テキストエリアの placeholder にサンプルを表示させたい
+    
+    /* ボタンの初期化 */
     indexed1();
     unweighted();
     undirected();
     normal();
+    
 });
 
 
@@ -133,15 +136,18 @@ function setPlaceHolder(){
     if(howindexed && isweighted && isdirected && howformat) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
 }
 
+function printDanger(str){
+    $('#inputValidator').append(`<div class=\"alert alert-danger\" role="alert"> <h4 class="alert-heading"> 入力形式が不正です!</h4> <p> message : ${str} </p> <hr> <p class="mb-0"> 詳しくは <a href="howtouse.html" class="alert-link"> 使い方 </a> をご覧ください. </p> </div>`);
+}
+
 
 // 入力が妥当かどうかを判定する
 function validator(str){
     
     // NaN が入っていたらだめ
     for(let i = 0; i < str.length; i++) if(isNaN(str[i])){
-
-        console.log("129");
-        message1();
+    
+        printDanger("入力に予期せぬ値が含まれたいます")
         return;
     }; 
    
@@ -153,17 +159,21 @@ function validator(str){
         let n = str[0];
         
         // 必要な数だけ入力があるかどうか
-        if(n * n + 1 != str.length){
-            console.log("139");
-            message1();
+        if(n * n + 1 < str.length){
+            printDanger("入力が多すぎます");
             return;
         }
+
+        if(n * n + 1 > str.length){
+            printDanger("入力が足りていません"); 
+            return;   
+        }
+
         // 重みなしの場合, 0 or 1 のみ許す
         if(!isweighted){
             for(let i = 1; i < str.length; i++){
                 if(!(str[i] == 1 || str[i] == 0)){
-                    console.log("145");
-                    message1();
+                    printDanger("「辺がある : 1,   辺がない : 0 」 と入力してください")
                     return;
                 }
             }
@@ -178,8 +188,7 @@ function validator(str){
                     let idx1 = (i - 1) * n + j;
                     let idx2 = (ii - 1) * n + jj;
                     if(str[idx1] != str[idx2]){
-                        console.log("167");
-                        message1();
+                        printDanger("対称行列を入力してください.  有向グラフを扱う場合は設定を変更してください.")
                         return;
                     }
                 }
@@ -192,8 +201,7 @@ function validator(str){
 
         // 入力の長さは 2 以上が必要
         if(str.length < 2){ 
-            console.log("161");
-            message1();
+            printDanger("入力が足りていません.");
             return;
         }
         let n = str[0];
@@ -201,16 +209,23 @@ function validator(str){
 
         // 必要な数だけ入力があるかどうか
         if(isweighted){
-            if(3 * m + 2 != str.length){
-                console.log(str.length);
-                console.log("171");
-                message1();
+            if(3 * m + 2 > str.length){
+                printDanger("入力が足りていません.");
+                return;
+            }
+
+            if(3 * m + 2 < str.length){
+                printDanger("入力が多すぎます.");
                 return;
             }
         }else{
+            if(2 * m + 2 > str.length){ 
+                printDanger("入力が足りていません.");
+                return;
+            }
+
             if(2 * m + 2 != str.length){ 
-                console.log("177");
-                message1();
+                printDanger("入力が多すぎます.");
                 return;
             }
         }
@@ -232,13 +247,11 @@ function validator(str){
             }
             
             if(a < 0 || b < 0 || n <= a || n <= b){
-                console.log("219");
-                message1();
+                printDanger("存在しない頂点を指定しています");
                 return;
             }
         }
     }
-
 
     return;
 }
@@ -300,6 +313,7 @@ function culcDist(){
 
 function inputToGraph(){
     
+    $('#inputValidator').empty();
     let nodeList = [];
     let edgeList = [];
     
