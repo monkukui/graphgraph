@@ -24,7 +24,6 @@ let adjList;
 // 負の閉路が存在する場合は -2
 let distance;
 
-
 // 木の直径
 // distance[i][j] の最大値と定義
 // TODO 綴りの確認
@@ -319,9 +318,8 @@ function inputToGraph(){
 
     // 改行文字と空白文字で分割
     
-    str = str.split(/\s|\n/).map(x => parseFloat(x));
+    str = str.split(/\s|\n/).filter(n => n !== "").map(n => parseFloat(n));
     validator(str);
-    console.log(str);
     // 頂点数
     let V = str[0];
     // 辺数
