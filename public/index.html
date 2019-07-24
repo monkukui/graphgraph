@@ -4,12 +4,12 @@
     <head>
         <!-- 由来は「なんで二回言うねん」 -->
         <title> GRAPH × GRAPH：競技プログラミングにおけるグラフ可視化サイト</title>
-	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	    <meta http-equiv="Content-Language" content='ja'>
-	    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	      <meta http-equiv="Content-Language" content='ja'>
+	      <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <meta name="format-detection" content="telephone=no">
         <meta name="google-site-verification" content="nXGC_JxO0yoP1qBzMnYD_xgufO6leSLw1kyNo2HZltM" />
-        
+
         
         <meta name="keywords" content="GRAPH,graph,グラフ,グラフ理論,ネットワーク,プログラミング,プロコン,競技プログラミング,AtCoder,情報系,コンピュータ,IT系" />
         <meta name="description" content="競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです">
@@ -21,14 +21,14 @@
         <meta property="og:description" content="競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://hello-world-494ec.firebaseapp.com/" />
-        <meta property="og:image" content="images/logo.png" />
+        <meta property="og:image" content="images/logo2.png" />
         
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@monkukui">
         <meta name="twitter:creator" content="@monkukui">
         <meta name="twitter:title" content="GRAPH × GRAPH：競技プログラミングにおけるグラフ可視化サイト">
         <meta name="twitter:description" content="競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです">
-        <meta name="twitter:image" content="https://hello-world-494ec.firebaseapp.com/images/logo.png">
+        <meta name="twitter:image" content="https://hello-world-494ec.firebaseapp.com/images/logo2.png">
         <meta charset="utf-8">
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">    
         <!-- iOS 用 -->
@@ -38,6 +38,12 @@
 
         <!-- jQuery -->
         <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+        <!-- vue.js -->
+        <!-- 開発バージョン、便利なコンソールの警告が含まれています -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- 本番バージョン、サイズと速度のために最適化されています -->
+        <!-- script src="https://cdn.jsdelivr.net/npm/vue"></script -->
 
         <!-- bootstrap to js -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
@@ -69,51 +75,32 @@
 
     <body>
         <div id="main-div" class="float-container">
-        
-            <!-- navigation start -->
-            <nav class="navbar fixed-top navbar-dark bg-dark navbar-fixed-top" -->
-                <a class="navbar-brand" href="index.html"> GRAPH <strong>×</strong> GRAPH </a>
-        
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="about.html"> このページについて</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="howtouse.html">使い方</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#"> アルゴリズム(準備中) </a>
-                        </li>
-                        
-                        <!--
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
-                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">piyo</a>
-                                <a class="dropdown-item" href="#">Another piyo</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">foo</a>
-                            </div>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">bar</a>
-                        </li>
-                        -->
-                    </ul>
-                </div>
-            </nav>
-            <!-- navigation end -->
             
+            <!-- nabigation start-->   
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <img src="images/logo4.png" alt="logo" width="111", height="64"><a class="navbar-brand" href="index.html"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5">GRAPH <strong>×</strong> GRAPH </font></a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">ホーム <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="howtouse.html">使い方</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">このページについて</a>
+                    </li>
+                </ul>
+            </div>
+            </nav>
+            <!-- nabigation end -->
+
             <div class="page-header">
-                <h1> GRAPH <strong>×</strong> GRAPH <font size="3">ver.1.2.1</font></h1>
+                <h1><!--img src="images/logo4.png" alt="logo" width="111", height="64">--> GRAPH <strong>×</strong> GRAPH <font size="3">ver.1.2.2</font></h1>
             </div>
             <div class="dropdown-divider"></div>
             <p> 競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</p>

@@ -146,7 +146,7 @@ function validator(str){
     
     // NaN が入っていたらだめ
     for(let i = 0; i < str.length; i++) if(isNaN(str[i])){
-        printDanger("入力に予期せぬ値が含まれたいます.")
+        printDanger("入力に予期せぬ値が含まれています.")
         return;
     };
 
@@ -460,3 +460,11 @@ function message0(){
 function message1(){
     alert("入力形式が間違っています.");
 }
+
+// vue を試してみる
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
