@@ -5,11 +5,36 @@
 	margin:0; padding:0; 	/*全要素のマージン・パディングをリセット*/
 }
 
+textarea {
+  resize: none;
+}
+
+div#hoge {
+  position: relative;
+  top: -30px;
+  left: 330px;    
+}
+
+div#logo {
+  position: relative;
+  left: 60px;
+  top: 10px;
+}
+
+div#graphgraph {
+  width:950px;
+  margin:0 auto;
+}
+
+div#about {
+  width:950;
+  margin:0 auto;
+}
+
 div#main-div {
-	width:1000px; margin:0 auto;                     /*内容全体をセンタリング*/
-	background-color: rgb(245, 245, 245);            /*内容全体の背景色*/
-	background-image:url("images/bg_pagebody.png");	 /*コンテンツ全体の背景画像*/
-	background-repeat:repeat-y;                      /*背景画像を縦方向に繰り返す*/
+	height:1500px; width:1100px; margin:0 auto;                     /*内容全体をセンタリング*/
+	background-color: rgb(256, 256, 256);                           /*内容全体の背景色*/
+  box-shadow: 0px 0px 10px 5px #888;
 }
 
 .bd-example {
@@ -22,7 +47,7 @@ div#main-div {
 
 
 body {
-    padding-top: 100px;
+    padding-top: 60px;
     font-family: Lato;
     background: rgb(245, 245, 245);
     min-height: 200%;
@@ -34,8 +59,8 @@ nav#navbar {
 
 #network {
     background: rgb(255, 255, 255);
-    width:  1000px;                 /* メイン画面の横幅 */
-    height: 400px;                  /* メイン画面の縦幅 */
+    width:  950px;                 /* メイン画面の横幅 */
+    height: 550px;                  /* メイン画面の縦幅 */
     border: 1px solid #000;         /* 境界線 */
 }
 
