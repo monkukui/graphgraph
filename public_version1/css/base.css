@@ -1,0 +1,46 @@
+/*============================================
+全般的なスタイル
+============================================*/
+* {
+	margin:0; padding:0; 	/*全要素のマージン・パディングをリセット*/
+}
+
+div#main-div {
+	width:1000px; margin:0 auto;                     /*内容全体をセンタリング*/
+	background-color: rgb(245, 245, 245);            /*内容全体の背景色*/
+	background-image:url("images/bg_pagebody.png");	 /*コンテンツ全体の背景画像*/
+	background-repeat:repeat-y;                      /*背景画像を縦方向に繰り返す*/
+}
+
+.bd-example {
+    position: relative;
+    padding: 1rem;
+    margin: 1rem -15px 0;
+    border: solid #f8f9fa;
+    border-width: .2rem 0 0;
+}
+
+
+body {
+    padding-top: 100px;
+    font-family: Lato;
+    background: rgb(245, 245, 245);
+    min-height: 200%;
+    margin: 0;
+}
+nav#navbar {
+    background: rgb(0, 0, 0);
+}
+
+#network {
+    background: rgb(255, 255, 255);
+    width:  1000px;                 /* メイン画面の横幅 */
+    height: 400px;                  /* メイン画面の縦幅 */
+    border: 1px solid #000;         /* 境界線 */
+}
+
+
+li#menu {
+    list-style-type:none;	        /*リストマーカー無しにする*/
+    display:inline;		            /*リスト項目をインライン表示にする*/
+}
