@@ -1,3 +1,13 @@
+function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 
 // c++ の pair 型的なものを用意する　
 function Pair(first, second){
@@ -92,7 +102,7 @@ Vue.component('top', {
   data: function() {
     return {
       logoname: 'logo8',
-      version: '2.0.0'
+      version: '2.1.0'
     }
   },
 
@@ -497,11 +507,25 @@ Vue.component('graphgraph', {
       this.setVis();
       this.visualize();
     },
-  
-    window:onload = function() {
+  },
+
+  mounted: function() {
+    let param = location.search;
+    if(param == ""){
       let container = document.getElementById("input_area");
       container.placeholder = "4 3\n1 2\n2 3\n3 4";
-    }
+    }else{
+      let paramFormat = getParam('format');
+      let paramIndexed = getParam('indexed');
+      let paramWeighted = getParam('weighted');
+      let paramDirected = getParam('directed');
+      let paramData = getParam('data');
+      this.setPlaceHolder(paramFormat=='true', paramDirected=='true', paramWeighted=='true', paramIndexed=='true');
+      paramData = paramData.replace(/-/g, ' ');
+      paramData = paramData.replace(/,/g, '\n');
+      this.inputText = paramData;
+      this.execute();
+    } 
   }
 })
 
