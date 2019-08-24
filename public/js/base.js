@@ -102,7 +102,7 @@ Vue.component('top', {
   data: function() {
     return {
       logoname: 'logo8',
-      version: '2.1.0'
+      version: '2.1.1'
     }
   },
 
@@ -222,7 +222,6 @@ Vue.component('graphgraph', {
     
     setPlaceHolder: function(format, directed, weighted, indexed) {
       
-      console.log(format + " " + directed + " " + weighted + " " + indexed);
       if(format != -1) this.format = format;
       if(weighted != -1) this.weighted = weighted;
       if(directed != -1) this.directed = directed;
@@ -381,7 +380,6 @@ Vue.component('graphgraph', {
     // 入力を読み込んで, V, E, adjList にセットする
     readInput: function() {
       
-      console.log(this.inputText);
       if(this.inputText == ""){
         this.inputText = this.placeHolder;
       }
@@ -506,6 +504,7 @@ Vue.component('graphgraph', {
       this.readInput();
       this.setVis();
       this.visualize();
+      scrollBy(0, 550);
     },
   },
 
