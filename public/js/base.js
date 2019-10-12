@@ -102,7 +102,7 @@ Vue.component('top', {
   data: function() {
     return {
       logoname: 'logo8',
-      version: '2.1.1'
+      version: '2.1.2'
     }
   },
 
