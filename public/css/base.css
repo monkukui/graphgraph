@@ -64,8 +64,8 @@ nav#navbar {
 
 #network {
     background: rgb(255, 255, 255);
-    width:  950px;                 /* メイン画面の横幅 */
-    height: 550px;                  /* メイン画面の縦幅 */
+    width:  600px;                 /* メイン画面の横幅 */
+    height: 362px;                  /* メイン画面の縦幅 */
     border: 1px solid #000;         /* 境界線 */
 }
 
@@ -73,4 +73,8 @@ nav#navbar {
 li#menu {
     list-style-type:none;	        /*リストマーカー無しにする*/
     display:inline;		            /*リスト項目をインライン表示にする*/
+}
+
+.space {
+  margin-right: 5px;
 }

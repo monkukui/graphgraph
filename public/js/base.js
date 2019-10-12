@@ -129,54 +129,65 @@ Vue.component('graphgraph', {
     <br>
       <h5> 競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
       <br>
-      <div>
-        <textarea id="input_area" v-model="inputText" rows="10" cols="60" placeholder=""></textarea>
-      </div>
-
-      <!-- input_area end -->
-
-      <!-- 詳細設定 start -->
-      <div class="preference">
-        <div class="btn-group">
-          <button v-if="indexed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">1-indexed</button>
-          <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">0-indexed</button>
-          <div class="dropdown-menu">
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, false)"> 0-indexed </button>
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, true)"> 1-indexed </button>
-          </div>
-        </div>
-        
-        <div class="btn-group">
-          <button v-if="directed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">directed</button>
-          <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">undirected</button>
-          <div class="dropdown-menu">
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, false, -1, -1)"> undirected </button>
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, true, -1, -1)"> directed </button>
-          </div>
-        </div>
-    
-        <div class="btn-group">
-          <button v-if="weighted" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">weighted</button>
-          <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">unweighted</button>
-          <div class="dropdown-menu">
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, false, -1)"> unweighted </button>
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, true, -1)"> weighted </button>
-          </div>
-        </div>
-
-        <div class="btn-group">
-          <button v-if="format" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
-          <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
-          <div class="dropdown-menu">
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(false, -1, -1, -1)"> matrix </button>
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(true, -1, -1, -1)"> normal </button>
-          </div>
-        </div>
-    
-        <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">IMPORT</button>
-      </div>
-      <!-- 詳細設定 end -->
       <br>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <textarea id="input_area" v-model="inputText" rows="15" cols="30" placeholder=""></textarea>
+          </div>
+          <div class="col">
+            <div id="network"></div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="space">
+            <div class="btn-group">
+              <button v-if="indexed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">1-indexed</button>
+              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">0-indexed</button>
+              <div class="dropdown-menu">
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, false)"> 0-indexed </button>
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, true)"> 1-indexed </button>
+              </div>
+            </div>
+          </div>
+          <div class="space">
+            <div class="btn-group">
+              <button v-if="directed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">directed</button>
+              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">undirected</button>
+              <div class="dropdown-menu">
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, false, -1, -1)"> undirected </button>
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, true, -1, -1)"> directed </button>
+              </div>
+            </div>
+          </div>
+          <div class="space">
+            <div class="btn-group">
+              <button v-if="weighted" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">weighted</button>
+              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">unweighted</button>
+              <div class="dropdown-menu">
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, false, -1)"> unweighted </button>
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, true, -1)"> weighted </button>
+              </div>
+            </div>
+          </div>
+          <div class="space">
+            <div class="btn-group">
+              <button v-if="format" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
+              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
+              <div class="dropdown-menu">
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(false, -1, -1, -1)"> matrix </button>
+                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(true, -1, -1, -1)"> normal </button>
+              </div>
+            </div>
+          </div>
+          <div class="space">
+            <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">IMPORT</button>
+          </div>
+        </div>
+      </div>
       <br>
 
       <div v-if="!valid">
@@ -188,7 +199,6 @@ Vue.component('graphgraph', {
         </div>
       </div>
 
-      <div id="network"></div>
     </div>
   `,
 
@@ -493,7 +503,7 @@ Vue.component('graphgraph', {
       };
       let options = {
           edges: {
-            //smooth: false  // 辺を直線に
+            smooth: false  // 辺を直線に
           }
       };
 
@@ -504,7 +514,6 @@ Vue.component('graphgraph', {
       this.readInput();
       this.setVis();
       this.visualize();
-      scrollBy(0, 550);
     },
   },
 
