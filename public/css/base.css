@@ -64,8 +64,8 @@ nav#navbar {
 
 #network {
     background: rgb(255, 255, 255);
-    width:  600px;                 /* メイン画面の横幅 */
-    height: 362px;                  /* メイン画面の縦幅 */
+    width:  670px;                 /* メイン画面の横幅 */
+    height: 506px;                  /* メイン画面の縦幅 */
     border: 1px solid #000;         /* 境界線 */
 }
 

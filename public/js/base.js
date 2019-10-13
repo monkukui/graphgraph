@@ -133,7 +133,7 @@ Vue.component('graphgraph', {
       <div class="container-fluid">
         <div class="row">
           <div class="col">
-            <textarea id="input_area" v-model="inputText" rows="15" cols="30" placeholder=""></textarea>
+            <textarea id="input_area" v-model="inputText" rows="21" cols="25" placeholder=""></textarea>
           </div>
           <div class="col">
             <div id="network"></div>
