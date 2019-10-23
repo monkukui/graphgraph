@@ -102,7 +102,7 @@ Vue.component('top', {
   data: function() {
     return {
       logoname: 'logo8',
-      version: '2.1.2'
+      version: '2.2.0'
     }
   },
 
@@ -137,6 +137,18 @@ Vue.component('graphgraph', {
           </div>
           <div class="col">
             <div id="network"></div>
+            <div class="smooth">
+              <div class="space">
+                <div class="btn-group">
+                  <button v-if="isSmooth" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> curve </button>
+                  <button v-else class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> line </button>
+                  <div class="dropdown-menu">
+                      <button class="dropdown-item" type="button" v-on:click="changeIsSmooth"> line </button>
+                      <button class="dropdown-item" type="button" v-on:click="changeIsSmooth"> curve </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +234,10 @@ Vue.component('graphgraph', {
     
       // 入力の妥当性判定に使う
       valid: true,
-      errorMessage: ""
+      errorMessage: "",
+
+      // 辺を滑らかにするか
+      isSmooth: false,
 
     }
 
@@ -503,7 +518,7 @@ Vue.component('graphgraph', {
       };
       let options = {
           edges: {
-            smooth: false  // 辺を直線に
+            smooth: this.isSmooth,
           }
       };
 
@@ -514,6 +529,10 @@ Vue.component('graphgraph', {
       this.readInput();
       this.setVis();
       this.visualize();
+    },
+    changeIsSmooth: function() {
+      if(this.isSmooth == false) this.isSmooth = true;
+      else                       this.isSmooth = false;
     },
   },
 

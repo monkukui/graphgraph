@@ -78,3 +78,8 @@ li#menu {
 .space {
   margin-right: 5px;
 }
+
+.smooth {
+    position: relative;
+    left: 600px;
+}
