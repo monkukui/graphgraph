@@ -139,14 +139,12 @@ Vue.component('graphgraph', {
             <div id="network"></div>
             <div class="smooth">
               <div class="space">
-                <div class="btn-group">
-                  <button v-if="isSmooth" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> curve </button>
-                  <button v-else class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> line </button>
-                  <div class="dropdown-menu">
-                      <button class="dropdown-item" type="button" v-on:click="changeIsSmooth"> line </button>
-                      <button class="dropdown-item" type="button" v-on:click="changeIsSmooth"> curve </button>
-                  </div>
-                </div>
+                <div class="card" style="width: 10rem; position: relative; left: -5rem;">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    辺を滑らかに <input type="checkbox" v-model="isSmooth" />
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
