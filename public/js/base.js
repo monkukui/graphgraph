@@ -151,6 +151,14 @@ Vue.component('graphgraph', {
         </div>
       </div>
       <br>
+      <div v-if="!valid">
+        <div class=\"alert alert-danger\" role="alert">
+          <h4 class="alert-heading">入力形式が正しくありません!</h4>
+          <p> message: {{ errorMessage }} </p>
+          <hr>
+          <p class="mb-0"> 詳しくは <a href="howtouse.html" class="alert-link"> 使い方 </a> をご覧ください.</p>
+        </div>
+      </div>
       <div class="container-fluid">
         <div class="row">
           <div class="space">
@@ -200,14 +208,6 @@ Vue.component('graphgraph', {
       </div>
       <br>
 
-      <div v-if="!valid">
-        <div class=\"alert alert-danger\" role="alert">
-          <h4 class="alert-heading">入力形式が正しくありません!</h4>
-          <p> message: {{ errorMessage }} </p>
-          <hr>
-          <p class="mb-0"> 詳しくは <a href="howtouse.html" class="alert-link"> 使い方 </a> をご覧ください.</p>
-        </div>
-      </div>
 
     </div>
   `,
