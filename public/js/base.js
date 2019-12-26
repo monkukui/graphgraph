@@ -102,7 +102,7 @@ Vue.component('top', {
   data: function() {
     return {
       logoname: 'logo8',
-      version: '2.2.1'
+      version: '2.2.2'
     }
   },
 
@@ -127,7 +127,7 @@ Vue.component('graphgraph', {
   template: `
     <div id="graphgraph">
     <br>
-      <h5> 競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
+      <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
       <br>
       <br>
       <div class="container-fluid">
@@ -294,6 +294,11 @@ Vue.component('graphgraph', {
       
       // NaN が入ってたらダメ
       for(let i = 0; i < arr.length; i++){
+        if(this.weighted) {
+          if(i >= 2 && (i - 2) % 3 == 2) {
+            continue;
+          }
+        }
         if(isNaN(arr[i])){
           this.errorMessage = "入力に予期せぬ値が含まれています.";
           this.valid = false;
@@ -408,14 +413,15 @@ Vue.component('graphgraph', {
       }
       
       // 改行文字と空白文字で分解
-      let arr = this.inputText.split(/\s|\n/).filter(n => n !== "").map(n => parseFloat(n));
+      // let arr = this.inputText.split(/\s|\n/).filter(n => n !== "").map(n => parseFloat(n));
+      let arr = this.inputText.split(/\s|\n/).filter(n => n !== "");
       
       // 妥当性判定
       this.validator(arr);
       if(!this.valid) return;
 
-      this.V = arr[0];
-      this.E = arr[1];
+      this.V = parseFloat(arr[0]);
+      this.E = parseFloat(arr[1]);
       this.adjList = new Array(this.V);
       for(let i = 0; i < this.V; i++) this.adjList[i] = new Array(0);
       
@@ -424,7 +430,7 @@ Vue.component('graphgraph', {
         for(let i = 0; i < this.V; i++){
           for(let j = 0; j < this.V; j++){
             let idx = i * this.V + j + 1;
-            if(arr[idx] == 0) continue;
+            if(parseFloat(arr[idx]) == 0) continue;
             let a = i;
             let b = j;
             let c = arr[idx];
@@ -436,8 +442,8 @@ Vue.component('graphgraph', {
         if(this.weighted){
           // 重み付き
           for(let i = 0; i < this.E; i++){
-            let a = arr[i * 3 + 2];
-            let b = arr[i * 3 + 3];
+            let a = parseFloat(arr[i * 3 + 2]);
+            let b = parseFloat(arr[i * 3 + 3]);
             let c = arr[i * 3 + 4];
             if(this.indexed){
               a--;
@@ -450,9 +456,9 @@ Vue.component('graphgraph', {
         }else{
           // 重みなし
           for(let i = 0; i < this.E; i++){
-            let a = arr[i * 2 + 2];
-            let b = arr[i * 2 + 3];
-            let c = 1;
+            let a = parseFloat(arr[i * 2 + 2]);
+            let b = parseFloat(arr[i * 2 + 3]);
+            let c = '1';
             if(this.indexed){
               a--;
               b--;
@@ -491,7 +497,6 @@ Vue.component('graphgraph', {
           let a = i;
           let b = this.adjList[i][j].first;
           let c = this.adjList[i][j].second;
-          if(c == 0) continue;
 
           let type;
           if(this.directed) type = 'to';
@@ -500,7 +505,7 @@ Vue.component('graphgraph', {
             type = 'with';
           }
           
-          if(this.weighted) this.edgeList.push({from: a, to: b, label: String(c), arrows: type});
+          if(this.weighted) this.edgeList.push({from: a, to: b, label: c, arrows: type});
           else this.edgeList.push({from: a, to: b, arrows: type});
         }
       }
@@ -1204,7 +1209,6 @@ Vue.component('formatCard', {
           {from: 3, to: 1, label: String(8), arrows: arr},
         ]);
       }
-      console.log(nodes.length);
 
       let data = {
         nodes,
