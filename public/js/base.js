@@ -202,7 +202,7 @@ Vue.component('graphgraph', {
             </div>
           </div>
           <div class="space">
-            <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">IMPORT</button>
+            <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">VISUALIZE!!</button>
           </div>
         </div>
       </div>
