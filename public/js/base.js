@@ -532,7 +532,6 @@ Vue.component('graphgraph', {
       else                       this.isSmooth = false;
     },
   },
-
   mounted: function() {
     let param = location.search;
     if(param == ""){
