@@ -139,7 +139,7 @@ Vue.component('graphgraph', {
             <div id="network"></div>
             <div class="smooth">
               <div class="space">
-                <div class="card" style="width: 10rem; position: relative; left: -5rem;">
+                <div class="card" style="width: 10rem; position: relative; left: 32rem;">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     辺を滑らかに <input type="checkbox" v-model="isSmooth" />
