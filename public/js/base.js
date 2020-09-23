@@ -207,8 +207,6 @@ Vue.component('graphgraph', {
         </div>
       </div>
       <br>
-
-
     </div>
   `,
 
@@ -270,7 +268,7 @@ Vue.component('graphgraph', {
       
 
       // 1-indexed 重みなし無向グラフ
-      if(this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 3\n1 2\n2 3\n3 4";
+      if(this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 10\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
       if(this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
       
       // 1-indexed 重みなし有向グラフ
@@ -284,7 +282,6 @@ Vue.component('graphgraph', {
       // 1-indexed 重みあり有向グラフ
       if(this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
       if(this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
-      
       
       this.placeHolder = container.placeholder;
     },
