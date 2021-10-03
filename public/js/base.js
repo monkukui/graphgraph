@@ -127,7 +127,8 @@ Vue.component('graphgraph', {
   template: `
     <div id="graphgraph">
     <br>
-      <h5> 競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
+      <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
+      <a href="https://twitter.com/monkukui2/status/1413176697189400587?s=20">改善案募集中</a>
       <br>
       <br>
       <div class="container-fluid">
@@ -219,7 +220,7 @@ Vue.component('graphgraph', {
       indexed: true,     // true := 1-indexed, false := 0-indexed
       
       inputText: "",
-      placeHolder:  "4 3\n1 2\n2 3\n3 4",
+      placeHolder:  "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10",
       V: 0,              // num of vertex
       E: 0,              // num of edge
       adjList: [],
@@ -268,7 +269,7 @@ Vue.component('graphgraph', {
       
 
       // 1-indexed 重みなし無向グラフ
-      if(this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 10\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
+      if(this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
       if(this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
       
       // 1-indexed 重みなし有向グラフ
@@ -533,7 +534,7 @@ Vue.component('graphgraph', {
     let param = location.search;
     if(param == ""){
       let container = document.getElementById("input_area");
-      container.placeholder = "4 3\n1 2\n2 3\n3 4";
+      container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
     }else{
       let paramFormat = getParam('format');
       let paramIndexed = getParam('indexed');
