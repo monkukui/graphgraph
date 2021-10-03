@@ -1,21 +1,19 @@
 function getParam(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 
 // c++ の pair 型的なものを用意する　
-function Pair(first, second){
+function Pair(first, second) {
   this.first = first;
   this.second = second;
 }
-
-
 
 // navigation-bar
 // home 使い方 このページについて　とかのやつ
@@ -66,7 +64,7 @@ Vue.component('navbar', {
     </nav>
   `,
 
-  data: function() {
+  data: function () {
     return {
       logoname: 'logo5',
     }
@@ -99,7 +97,7 @@ Vue.component('top', {
     <div class="dropdown-divider"></div>
   </div>
   `,
-  data: function() {
+  data: function () {
     return {
       logoname: 'logo8',
       version: '2.2.1'
@@ -211,342 +209,378 @@ Vue.component('graphgraph', {
     </div>
   `,
 
-  data: function() {
+  data: function () {
     return {
       // 不明瞭だけど、こうするしかなかったんです...
       format: true,      // true := normal, false := matrix
       directed: false,   // true := directed, false := undirected
       weighted: false,   // true := weighted, false := undirected
       indexed: true,     // true := 1-indexed, false := 0-indexed
-      
+
       inputText: "",
-      placeHolder:  "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10",
+      placeHolder: "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10",
       V: 0,              // num of vertex
       E: 0,              // num of edge
       adjList: [],
-      
+
       // vis.js で使うもの
       nodeList: [],
       edgeList: [],
-    
+
       // 入力の妥当性判定に使う
       valid: true,
       errorMessage: "",
 
       // 辺を滑らかにするか
       isSmooth: false,
-
     }
-
   },
 
   methods: {
-    
-    setPlaceHolder: function(format, directed, weighted, indexed) {
-      
-      if(format != -1) this.format = format;
-      if(weighted != -1) this.weighted = weighted;
-      if(directed != -1) this.directed = directed;
-      if(indexed != -1) this.indexed = indexed;
+
+    setPlaceHolder: function (format, directed, weighted, indexed) {
+
+      if (format != -1) this.format = format;
+      if (weighted != -1) this.weighted = weighted;
+      if (directed != -1) this.directed = directed;
+      if (indexed != -1) this.indexed = indexed;
 
       let container = document.getElementById("input_area");
-      
+
       // 0-indexed 重みなし無向グラフ
-      if(!this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
-      if(!this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
-      
+      if (!this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
+      if (!this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+
       // 0-indexed 重みなし有向グラフ
-      if(!this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
-      if(!this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
-      
+      if (!this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
+      if (!this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+
       // 0-indexed 重みあり無向グラフ
-      if(!this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
-      if(!this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
-      
+      if (!this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
+      if (!this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+
       // 0-indexed 重みあり有向グラフ
-      if(!this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
-      if(!this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
-      
+      if (!this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
+      if (!this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
+
 
       // 1-indexed 重みなし無向グラフ
-      if(this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
-      if(this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
-      
+      if (this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
+      if (this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+
       // 1-indexed 重みなし有向グラフ
-      if(this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2\n2 3\n3 4";
-      if(this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
-      
+      if (this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2\n2 3\n3 4";
+      if (this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+
       // 1-indexed 重みあり無向グラフ
-      if(this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
-      if(this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
-      
+      if (this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
+      if (this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+
       // 1-indexed 重みあり有向グラフ
-      if(this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
-      if(this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
-      
+      if (this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
+      if (this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
+
       this.placeHolder = container.placeholder;
     },
 
-    validator: function(arr) {
+    validator: function (arr) {
       this.valid = true;
-      
+
       // NaN が入ってたらダメ
-      for(let i = 0; i < arr.length; i++){
-        if(isNaN(arr[i])){
+      for (let i = 0; i < arr.length; i++) {
+        if (isNaN(arr[i])) {
           this.errorMessage = "入力に予期せぬ値が含まれています.";
           this.valid = false;
+          return [];
         }
       }
 
-      if(!this.format){
-        
+      if (!this.format) {
+
         // 隣接行列
         let n = arr[0];
 
         // 必要な数だけ入力があるかどうか
-        if(n * n + 1 < arr.length){
+        if (n * n + 1 < arr.length) {
           this.errorMessage = "入力が多すぎます.";
           this.valid = false;
+          return [];
         }
 
-        if(n * n + 1 > arr.length){
+        if (n * n + 1 > arr.length) {
           this.errorMessage = "入力が足りていません.";
           this.valid = false;
+          return [];
         }
 
         // 重みなしの場合, 0 or 1 のみを許す
-        if(!this.weighted){
-          for(let i = 1; i < arr.length; i++){
-            if(!(arr[i] == 0 || arr[i] == 1)){
+        if (!this.weighted) {
+          for (let i = 1; i < arr.length; i++) {
+            if (!(arr[i] === 0 || arr[i] === 1)) {
               this.errorMessage = "「辺がある: 1,  辺がない: 0」 と入力してください.";
               this.valid = false;
+              return [];
             }
           }
         }
 
         // 無向グラフの場合, 対称行列のみを許す
-        if(!this.directed){
-          for(let i = 1; i <= n; i++){
-            for(let j = 1; j <= n; j++){
+        if (!this.directed) {
+          for (let i = 1; i <= n; i++) {
+            for (let j = 1; j <= n; j++) {
               let ii = j;
               let jj = i;
               let idx1 = (i - 1) * n + j;
               let idx2 = (ii - 1) * n + jj;
-              if(arr[idx1] != arr[idx2]){
+              if (arr[idx1] != arr[idx2]) {
                 this.errorMessage = "無向グラフを扱う場合, 対称行列を入力してください."
                 this.valid = false;
+                return [];
               }
             }
           }
         }
-      }else{
-        
+      } else {
+
         // AtCoder 形式
-        
+
         // 入力の長さは 2 以上が必要
-        if(arr.length < 2){
-          this.errorMessage = "入力が足りていません.";
-          this.valid = false;
+        if (arr.length < 2) {
+          // 頂点数 1 の木構造なら例外
+          if (arr.length === 1 && arr[0] === 1) {
+            arr.push(0);
+          } else {
+            this.errorMessage = "入力が足りていません.";
+            this.valid = false;
+            return [];
+          }
         }
 
         let n = arr[0];
-        let m = arr[1];
 
-        // 必要な数だけ入力があるかどうか
-        if(this.weighted){
-          if(3 * m + 2 > arr.length){
-            this.errorMessage = "入力が足りていません.";
-            this.valid = false;
+        // 木構造として推測できるか
+        if (this.weighted) {
+          if (3 * (n - 1) + 1 === arr.length) {
+            let tmp = [arr[0], arr[0] - 1];
+            for (let i = 1; i < arr.length; i++) {
+              tmp.push(arr[i]);
+            }
+            arr = tmp;
           }
-          if(3 * m + 2 < arr.length){
-            this.errorMessage = "入力が多すぎます.";
-            this.valid = false;
-          }
-        }else{
-          if(2 * m + 2 > arr.length){
-            this.errorMessage = "入力が足りていません.";
-            this.valid = false;
-          }
-          if(2 * m + 2 < arr.length){
-            this.errorMessage = "入力が多すぎます.";
-            this.valid = false;
+        } else {
+          if (2 * (n - 1) + 1 === arr.length) {
+            let tmp = [arr[0], arr[0] - 1];
+            for (let i = 1; i < arr.length; i++) {
+              tmp.push(arr[i]);
+            }
+            arr = tmp;
           }
         }
-        
+
+        let m = arr[1];
+        console.log(arr);
+
+        // 必要な数だけ入力があるかどうか
+        if (this.weighted) {
+          if (3 * m + 2 > arr.length) {
+            this.errorMessage = "入力が足りていません.";
+            this.valid = false;
+            return [];
+          }
+          if (3 * m + 2 < arr.length) {
+            this.errorMessage = "入力が多すぎます.";
+            this.valid = false;
+            return [];
+          }
+        } else {
+          if (2 * m + 2 > arr.length) {
+            this.errorMessage = "入力が足りていません.";
+            this.valid = false;
+            return [];
+          }
+          if (2 * m + 2 < arr.length) {
+            this.errorMessage = "入力が多すぎます.";
+            this.valid = false;
+            return [];
+          }
+        }
+
         // 存在しない頂点を指定したらダメ
-        for(let i = 0; i < m; i++){
+        for (let i = 0; i < m; i++) {
           let a;
           let b;
-          if(this.weighted){
+          if (this.weighted) {
             a = arr[i * 3 + 2];
             b = arr[i * 3 + 3];
-          }else{
+          } else {
             a = arr[i * 2 + 2];
             b = arr[i * 2 + 3];
           }
 
-          if(this.indexed){
+          if (this.indexed) {
             a--;
             b--;
           }
 
-          if(a < 0 || b < 0 || n <= a || n <= b){
+          if (a < 0 || b < 0 || n <= a || n <= b) {
             this.errorMessage = "存在しない頂点を指定しています";
             this.valid = false;
+            return [];
           }
         }
       }
+      return arr;
     },
 
     // 入力を読み込んで, V, E, adjList にセットする
-    readInput: function() {
-      
-      if(this.inputText == ""){
+    readInput: function () {
+
+      if (this.inputText === "") {
         this.inputText = this.placeHolder;
       }
-      
+
       // 改行文字と空白文字で分解
       let arr = this.inputText.split(/\s|\n/).filter(n => n !== "").map(n => parseFloat(n));
-      
+
       // 妥当性判定
-      this.validator(arr);
-      if(!this.valid) return;
+      arr = this.validator(arr);
+      if (!this.valid) return;
 
       this.V = arr[0];
       this.E = arr[1];
       this.adjList = new Array(this.V);
-      for(let i = 0; i < this.V; i++) this.adjList[i] = new Array(0);
-      
-      if(!this.format){
+      for (let i = 0; i < this.V; i++) this.adjList[i] = new Array(0);
+
+      if (!this.format) {
         // 隣接行列
-        for(let i = 0; i < this.V; i++){
-          for(let j = 0; j < this.V; j++){
+        for (let i = 0; i < this.V; i++) {
+          for (let j = 0; j < this.V; j++) {
             let idx = i * this.V + j + 1;
-            if(arr[idx] == 0) continue;
+            if (arr[idx] == 0) continue;
             let a = i;
             let b = j;
             let c = arr[idx];
             this.adjList[a].push(new Pair(b, c));
           }
         }
-      }else{
+      } else {
         // AtCoder 形式
-        if(this.weighted){
+        if (this.weighted) {
           // 重み付き
-          for(let i = 0; i < this.E; i++){
+          for (let i = 0; i < this.E; i++) {
             let a = arr[i * 3 + 2];
             let b = arr[i * 3 + 3];
             let c = arr[i * 3 + 4];
-            if(this.indexed){
+            if (this.indexed) {
               a--;
               b--;
             }
 
             this.adjList[a].push(new Pair(b, c));
-            if(!this.directed) this.adjList[b].push(new Pair(a, c));
+            if (!this.directed) this.adjList[b].push(new Pair(a, c));
           }
-        }else{
+        } else {
           // 重みなし
-          for(let i = 0; i < this.E; i++){
+          for (let i = 0; i < this.E; i++) {
             let a = arr[i * 2 + 2];
             let b = arr[i * 2 + 3];
             let c = 1;
-            if(this.indexed){
+            if (this.indexed) {
               a--;
               b--;
             }
 
             this.adjList[a].push(new Pair(b, c));
-            if(!this.directed) this.adjList[b].push(new Pair(a, c));
+            if (!this.directed) this.adjList[b].push(new Pair(a, c));
           }
         }
       }
     },
     // adjList から を visの情報に変換 
-    setVis: function() {
-      
+    setVis: function () {
+
       // 初期化
       this.nodeList = [];
       this.edgeList = [];
 
       // 頂点情報を追加
-      for(let i = 0; i < this.V; i++){
+      for (let i = 0; i < this.V; i++) {
         let lab;
-        if(this.indexed){
+        if (this.indexed) {
           lab = String(i + 1);
-          if(i + 1 < 10) lab = ' ' + lab + ' ';
-        }else{
+          if (i + 1 < 10) lab = ' ' + lab + ' ';
+        } else {
           lab = String(i);
-          if(i < 10) lab = ' ' + lab + ' ';
+          if (i < 10) lab = ' ' + lab + ' ';
         }
 
         this.nodeList.push({id: i, label: lab});
       }
 
       // 辺情報を追加
-      for(let i = 0; i < this.V; i++){
-        for(let j = 0; j < this.adjList[i].length; j++){
+      for (let i = 0; i < this.V; i++) {
+        for (let j = 0; j < this.adjList[i].length; j++) {
           let a = i;
           let b = this.adjList[i][j].first;
           let c = this.adjList[i][j].second;
 
           let type;
-          if(this.directed) type = 'to';
-          else{
-            if(a > b) continue;
+          if (this.directed) type = 'to';
+          else {
+            if (a > b) continue;
             type = 'with';
           }
-          
-          if(this.weighted) this.edgeList.push({from: a, to: b, label: String(c), arrows: type});
+
+          if (this.weighted) this.edgeList.push({from: a, to: b, label: String(c), arrows: type});
           else this.edgeList.push({from: a, to: b, arrows: type});
         }
       }
     },
-    visualize: function() {
+    visualize: function () {
       let nodes = new vis.DataSet(this.nodeList);
       let edges = new vis.DataSet(this.edgeList);
-      
+
       let container = document.getElementById('network');
       let data = {
         nodes,
         edges,
       };
       let options = {
-          edges: {
-            smooth: this.isSmooth,
-          }
+        edges: {
+          smooth: this.isSmooth,
+        }
       };
 
       let network = new vis.Network(container, data, options);
 
     },
-    execute: function() {
+    execute: function () {
       this.readInput();
       this.setVis();
       this.visualize();
     },
-    changeIsSmooth: function() {
-      if(this.isSmooth == false) this.isSmooth = true;
-      else                       this.isSmooth = false;
+    changeIsSmooth: function () {
+      if (this.isSmooth == false) this.isSmooth = true;
+      else this.isSmooth = false;
     },
   },
-  mounted: function() {
+  mounted: function () {
     let param = location.search;
-    if(param == ""){
+    if (param == "") {
       let container = document.getElementById("input_area");
       container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
-    }else{
+    } else {
       let paramFormat = getParam('format');
       let paramIndexed = getParam('indexed');
       let paramWeighted = getParam('weighted');
       let paramDirected = getParam('directed');
       let paramData = getParam('data');
-      this.setPlaceHolder(paramFormat=='true', paramDirected=='true', paramWeighted=='true', paramIndexed=='true');
+      this.setPlaceHolder(paramFormat == 'true', paramDirected == 'true', paramWeighted == 'true', paramIndexed == 'true');
       paramData = paramData.replace(/-/g, ' ');
       paramData = paramData.replace(/,/g, '\n');
       this.inputText = paramData;
       this.execute();
-    } 
+    }
   }
 })
 
@@ -578,14 +612,14 @@ Vue.component('about', {
 
   </div>
   `,
-  data: function() {
+  data: function () {
     return {
       good_browsers: [
-        "Google Chrome", 
+        "Google Chrome",
         "Firefox"
       ],
       bad_browsers: [
-        "Safari", 
+        "Safari",
         "Internet Explorer"
       ],
       techs: [
@@ -652,7 +686,7 @@ Vue.component('ExplainButton', {
   </div>
   `,
   methods: {
-    message: function() {
+    message: function () {
       alert("このページでは何も起こりません.");
     }
   }
@@ -1051,7 +1085,6 @@ Vue.component('Card1111', {
 })
 
 
-
 Vue.component('formatCard', {
   template: ` 
   <div>
@@ -1127,13 +1160,13 @@ Vue.component('formatCard', {
 
   </div>
   `,
-  data: function() {
+  data: function () {
     return {
       lazyFormat: true,
       lazyWeighted: false,
       lazyDirected: false,
       lazyIndexed: true,
-      
+
       mathFlag: false,
       format: true,
       weighted: false,
@@ -1143,10 +1176,10 @@ Vue.component('formatCard', {
     }
   },
   methods: {
-    turnFlag: function() {
+    turnFlag: function () {
       this.mathFlag = true;
     },
-    execute: function() {
+    execute: function () {
 
       MathJax.Hub.Typeset();
       this.mathFlag = false;
@@ -1154,18 +1187,18 @@ Vue.component('formatCard', {
       this.weighted = this.lazyWeighted;
       this.directed = this.lazyDirected;
       this.indexed = this.lazyIndexed;
-  
+
       this.canDisplay = true;
       let edges;
       let nodes;
-      if(this.indexed){
+      if (this.indexed) {
         nodes = new vis.DataSet([
           {id: 0, label: ' 1 '},
           {id: 1, label: ' 2 '},
           {id: 2, label: ' 3 '},
           {id: 3, label: ' 4 '}
         ]);
-      }else{
+      } else {
         nodes = new vis.DataSet([
           {id: 0, label: ' 0 '},
           {id: 1, label: ' 1 '},
@@ -1174,11 +1207,11 @@ Vue.component('formatCard', {
         ]);
       }
 
-      
-      if(!this.weighted){
-        
+
+      if (!this.weighted) {
+
         let arr;
-        if(this.directed) arr = 'to';
+        if (this.directed) arr = 'to';
         else arr = 'with';
         edges = new vis.DataSet([
           {from: 0, to: 1, arrows: arr},
@@ -1188,10 +1221,10 @@ Vue.component('formatCard', {
         ]);
       }
 
-      if(this.weighted){
-        
+      if (this.weighted) {
+
         let arr;
-        if(this.directed) arr = 'to';
+        if (this.directed) arr = 'to';
         else arr = 'with';
         edges = new vis.DataSet([
           {from: 0, to: 1, label: String(3), arrows: arr},
@@ -1216,11 +1249,11 @@ Vue.component('formatCard', {
       };
       let container = document.getElementById('network');
       let network = new vis.Network(container, data, options);
-      
+
     }
   },
   watch: {
-    mathFlag: function() {
+    mathFlag: function () {
       MathJax.Hub.Typeset();
     },
   }
@@ -1238,14 +1271,13 @@ Vue.component('howto', {
     <formatCard></formatCard>
   </div>
   `,
-  data: function() {
-    return {
-    }
+  data: function () {
+    return {}
   },
 })
 
 
 new Vue({
   el: '#app'
-  
+
 })
