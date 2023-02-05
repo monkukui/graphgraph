@@ -126,7 +126,7 @@ Vue.component('graphgraph', {
     <div id="graphgraph">
     <br>
       <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
-      <a href="https://twitter.com/monkukui2/status/1413176697189400587?s=20">改善案募集中</a>
+      <a href="https://twitter.com/monkukui/status/1413176697189400587?s=20">改善案募集中</a>
       <br>
       <br>
       <div class="container-fluid">
@@ -601,7 +601,7 @@ Vue.component('about', {
     </ul>
 
     <h2>作った人</h2>
-    <p>monkukui (<a href="https://twitter.com/monkukui2" target="_blank">@monkukui2</a>)が作りました.</a>
+    <p>monkukui (<a href="https://twitter.com/monkukui" target="_blank">@monkukui</a>)が作りました.</a>
     <p> サイトの作成に協力してくださった全ての人達に, この場を借りて謝辞を述べさせていただきます.</p>
 
     <h2>使用したもの</h2>
