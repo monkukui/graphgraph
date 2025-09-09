@@ -125,7 +125,7 @@ Vue.component('graphgraph', {
   template: `
     <div id="graphgraph">
     <br>
-      <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです.</h5>
+      <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです。</h5>
       <a href="https://twitter.com/monkukui/status/1413176697189400587?s=20">改善案募集中</a>
       <br>
       <br>
@@ -202,6 +202,9 @@ Vue.component('graphgraph', {
           </div>
           <div class="space">
             <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">VISUALIZE!!</button>
+          </div>
+          <div class="space">
+            <button type="button" class="btn btn-outline-success" v-on:click="exportURL">URL Export</button>
           </div>
         </div>
       </div>
@@ -558,6 +561,40 @@ Vue.component('graphgraph', {
       this.readInput();
       this.setVis();
       this.visualize();
+    },
+    exportURL: function () {
+      let inputData = this.inputText === "" ? this.placeHolder : this.inputText;
+      
+      // データを URL パラメータ用に変換（改行を,に、その後空白を-に）
+      let encodedData = inputData.replace(/\n/g, ',').replace(/ /g, '-');
+      
+      // URLパラメータを構築
+      let params = new URLSearchParams();
+      params.set('format', this.format.toString());
+      params.set('indexed', this.indexed.toString());
+      params.set('weighted', this.weighted.toString());
+      params.set('directed', this.directed.toString());
+      params.set('data', encodedData);
+      
+      // 完全なURLを生成
+      let baseURL = window.location.origin + window.location.pathname;
+      let exportURL = baseURL + '?' + params.toString();
+      
+      // クリップボードにコピー
+      navigator.clipboard.writeText(exportURL).then(() => {
+        alert('URLがクリップボードにコピーされました！');
+      }).catch(() => {
+        // フォールバック: テキストエリアを使用
+        let textArea = document.createElement('textarea');
+        textArea.value = exportURL;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('URLがクリップボードにコピーされました！');
+      });
+      
+      return exportURL;
     },
     changeIsSmooth: function () {
       if (this.isSmooth == false) this.isSmooth = true;
