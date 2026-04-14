@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "hello-world-494ec",
     "public": "public",
     "ignore": [
       "firebase.json",

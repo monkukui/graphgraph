@@ -90,17 +90,17 @@ Vue.component('navbar', {
 })
 
 Vue.component('top', {
-  template: ` 
+  template: `
   <div id="top">
-    <div id="logo"><img :src="image" alt="logo" width="260" height="160"></div>
-    <div id="hoge"> ver.{{ version }}</div> 
-    <div class="dropdown-divider"></div>
+    <div id="logo"><img :src="image" alt="logo" width="220" height="135"></div>
+    <div id="hoge">ver.{{ version }}</div>
+    <div class="dropdown-divider" style="width:100%; margin-top: 16px;"></div>
   </div>
   `,
   data: function () {
     return {
       logoname: 'logo8',
-      version: '2.2.1'
+      version: '3.0.0'
     }
   },
 
@@ -124,91 +124,123 @@ Vue.component('foot', {
 Vue.component('graphgraph', {
   template: `
     <div id="graphgraph">
-    <br>
-      <h5>競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです。</h5>
-      <a href="https://twitter.com/monkukui/status/1413176697189400587?s=20">改善案募集中</a>
-      <br>
-      <br>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col">
-            <textarea id="input_area" v-model="inputText" rows="21" cols="25" placeholder=""></textarea>
-          </div>
-          <div class="col">
-            <div id="network"></div>
-            <div class="smooth">
-              <div class="space">
-                <div class="card" style="width: 10rem; position: relative; left: 32rem;">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    辺を滑らかに <input type="checkbox" v-model="isSmooth" />
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="preset-row">
+        <span class="preset-label">サンプル:</span>
+        <button v-for="p in presets" :key="p.name" class="btn-preset" v-on:click="loadPreset(p)">{{ p.name }}</button>
       </div>
-      <br>
+
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 8px;">
+        競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです。
+        <a href="https://twitter.com/monkukui/status/1413176697189400587?s=20" style="font-size:0.82rem; margin-left:8px;">改善案募集中</a>
+      </p>
+
       <div v-if="!valid">
-        <div class=\"alert alert-danger\" role="alert">
+        <div class="alert alert-danger" role="alert">
           <h4 class="alert-heading">入力形式が正しくありません!</h4>
-          <p> message: {{ errorMessage }} </p>
+          <p>message: {{ errorMessage }}</p>
           <hr>
-          <p class="mb-0"> 詳しくは <a href="howtouse.html" class="alert-link"> 使い方 </a> をご覧ください.</p>
+          <p class="mb-0">詳しくは <a href="howtouse.html" class="alert-link">使い方</a> をご覧ください.</p>
         </div>
       </div>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="space">
-            <div class="btn-group">
-              <button v-if="indexed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">1-indexed</button>
-              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">0-indexed</button>
-              <div class="dropdown-menu">
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, false)"> 0-indexed </button>
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, true)"> 1-indexed </button>
-              </div>
+
+      <div class="container-fluid" style="padding: 0;">
+        <div class="row no-gutters" style="gap: 16px; flex-wrap: nowrap;">
+          <div class="col" style="flex: 0 0 auto; width: 220px;">
+            <textarea id="input_area" v-model="inputText" rows="22" placeholder=""></textarea>
+          </div>
+          <div class="col" style="flex: 1 1 0; min-width: 0;">
+            <div id="network"></div>
+            <div class="smooth-toggle-area">
+              <label for="smoothCheckbox">辺を滑らかに</label>
+              <input id="smoothCheckbox" type="checkbox" v-model="isSmooth" />
             </div>
-          </div>
-          <div class="space">
-            <div class="btn-group">
-              <button v-if="directed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">directed</button>
-              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">undirected</button>
-              <div class="dropdown-menu">
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, false, -1, -1)"> undirected </button>
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, true, -1, -1)"> directed </button>
-              </div>
-            </div>
-          </div>
-          <div class="space">
-            <div class="btn-group">
-              <button v-if="weighted" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">weighted</button>
-              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">unweighted</button>
-              <div class="dropdown-menu">
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, false, -1)"> unweighted </button>
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, true, -1)"> weighted </button>
-              </div>
-            </div>
-          </div>
-          <div class="space">
-            <div class="btn-group">
-              <button v-if="format" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
-              <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
-              <div class="dropdown-menu">
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(false, -1, -1, -1)"> matrix </button>
-                  <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(true, -1, -1, -1)"> normal </button>
-              </div>
-            </div>
-          </div>
-          <div class="space">
-            <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">VISUALIZE!!</button>
-          </div>
-          <div class="space">
-            <button type="button" class="btn btn-outline-success" v-on:click="exportURL">URL Export</button>
           </div>
         </div>
       </div>
-      <br>
+
+      <div class="toolbar-row">
+        <div class="space">
+          <div class="btn-group">
+            <button v-if="indexed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">1-indexed</button>
+            <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">0-indexed</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, false)">0-indexed</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, -1, true)">1-indexed</button>
+            </div>
+          </div>
+        </div>
+        <div class="space">
+          <div class="btn-group">
+            <button v-if="directed" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">directed</button>
+            <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">undirected</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, false, -1, -1)">undirected</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, true, -1, -1)">directed</button>
+            </div>
+          </div>
+        </div>
+        <div class="space">
+          <div class="btn-group">
+            <button v-if="weighted" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">weighted</button>
+            <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">unweighted</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, false, -1)">unweighted</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(-1, -1, true, -1)">weighted</button>
+            </div>
+          </div>
+        </div>
+        <div class="space">
+          <div class="btn-group">
+            <button v-if="format" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
+            <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(false, -1, -1, -1)">matrix</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(true, -1, -1, -1)">normal</button>
+            </div>
+          </div>
+        </div>
+        <div class="space">
+          <button type="button" class="btn btn-outline-primary" id="importButton" v-on:click="execute">VISUALIZE!!</button>
+        </div>
+        <div class="space">
+          <button type="button" class="btn btn-outline-success" v-on:click="exportURL">URL Export</button>
+        </div>
+
+      </div>
+
+      <div v-if="graphInfo.visible" class="graph-info-panel">
+        <span class="info-item">頂点 <span class="info-value">{{ graphInfo.vertices }}</span></span>
+        <span class="info-item">辺 <span class="info-value">{{ graphInfo.edges }}</span></span>
+        <span v-if="!graphInfo.directed" class="info-item">連結成分 <span class="info-value">{{ graphInfo.components }}</span></span>
+        <span v-if="graphInfo.directed" class="info-item">SCC <span class="info-value">{{ graphInfo.sccCount }}</span></span>
+        <span v-if="graphInfo.isTree" class="tree-badge">木</span>
+        <span v-if="graphInfo.isForest" class="forest-badge">森</span>
+        <span v-if="graphInfo.isComplete" class="complete-badge">完全グラフ</span>
+        <span v-if="graphInfo.isBipartite" class="bipartite-badge">二部グラフ</span>
+        <span v-if="graphInfo.isDAG" class="dag-badge">DAG</span>
+        <span v-if="graphInfo.isStronglyConnected" class="scc-badge">強連結</span>
+      </div>
+      <div v-if="graphInfo.visible" class="feature-row">
+        <div class="feature-section">
+          <span class="feature-label">最短経路</span>
+          <input type="number" v-model.number="spFrom" class="node-input" placeholder="始点">
+          <span class="feature-arrow">→</span>
+          <input type="number" v-model.number="spTo" class="node-input" placeholder="終点">
+          <button class="btn-feature" v-on:click="findAndHighlightPath">表示</button>
+          <span v-if="spResult !== null" class="feature-result">距離: <strong>{{ spResult }}</strong></span>
+          <span v-if="spNoPath" class="feature-noresult">経路なし</span>
+          <button v-if="spResult !== null || spNoPath" class="btn-feature-reset" v-on:click="resetPath">✕</button>
+        </div>
+        <div v-if="spPath.length > 0" class="sp-path-panel">
+          <span class="topo-label">経路:</span>
+          <span v-for="(node, i) in spPath" :key="i" class="topo-node">{{ node }}<span v-if="i < spPath.length - 1" class="topo-arrow"> → </span></span>
+        </div>
+      </div>
+
+      <div v-if="graphInfo.isDAG && graphInfo.topoOrder" class="topo-order">
+        <span class="topo-label">トポロジカル順序:</span>
+        <span v-for="(node, i) in graphInfo.topoOrder" :key="i" class="topo-node">{{ node }}<span v-if="i < graphInfo.topoOrder.length - 1" class="topo-arrow"> → </span></span>
+      </div>
     </div>
   `,
 
@@ -236,6 +268,32 @@ Vue.component('graphgraph', {
 
       // 辺を滑らかにするか
       isSmooth: false,
+
+
+      // 最短経路
+      spFrom: '', spTo: '', spResult: null, spNoPath: false, spPath: [],
+
+
+      // グラフ情報パネル
+      graphInfo: {
+        visible: false,
+        vertices: 0,
+        edges: 0,
+        components: 0,
+        isTree: false,
+      },
+
+      // サンプルグラフのプリセット（クリックごとにランダム生成）
+      presets: [
+        { name: 'スター',     type: 'star' },
+        { name: 'パス',       type: 'path' },
+        { name: 'サイクル',   type: 'cycle' },
+        { name: '完全グラフ', type: 'complete' },
+        { name: '二部グラフ', type: 'bipartite' },
+        { name: '重み付き木', type: 'weighted-tree' },
+        { name: '重み付きグラフ', type: 'weighted-graph' },
+        { name: 'DAG',        type: 'dag' },
+      ],
     }
   },
 
@@ -361,23 +419,15 @@ Vue.component('graphgraph', {
 
         let n = arr[0];
 
-        // 木構造として推測できるか
-        if (this.weighted) {
-          if (3 * (n - 1) + 1 === arr.length) {
-            let tmp = [arr[0], arr[0] - 1];
-            for (let i = 1; i < arr.length; i++) {
-              tmp.push(arr[i]);
-            }
-            arr = tmp;
-          }
-        } else {
-          if (2 * (n - 1) + 1 === arr.length) {
-            let tmp = [arr[0], arr[0] - 1];
-            for (let i = 1; i < arr.length; i++) {
-              tmp.push(arr[i]);
-            }
-            arr = tmp;
-          }
+        // M が省略されているか自動検出（木に限らず任意のグラフに対応）
+        const edgeWidth = this.weighted ? 3 : 2;
+        const normalExpectedLen = 2 + arr[1] * edgeWidth; // N M edges... 形式
+        const remainingFitsEdges = (arr.length - 1) % edgeWidth === 0; // N edges... 形式
+        if (arr.length !== normalExpectedLen && remainingFitsEdges) {
+          const inferredM = (arr.length - 1) / edgeWidth;
+          let tmp = [arr[0], inferredM];
+          for (let i = 1; i < arr.length; i++) tmp.push(arr[i]);
+          arr = tmp;
         }
 
         let m = arr[1];
@@ -499,14 +549,11 @@ Vue.component('graphgraph', {
         }
       }
     },
-    // adjList から を visの情報に変換 
+    // adjList から を visの情報に変換
     setVis: function () {
-
-      // 初期化
       this.nodeList = [];
       this.edgeList = [];
 
-      // 頂点情報を追加
       for (let i = 0; i < this.V; i++) {
         let lab;
         if (this.indexed) {
@@ -516,51 +563,296 @@ Vue.component('graphgraph', {
           lab = String(i);
           if (i < 10) lab = ' ' + lab + ' ';
         }
-
         this.nodeList.push({id: i, label: lab});
       }
 
-      // 辺情報を追加
+      let edgeId = 0;
       for (let i = 0; i < this.V; i++) {
         for (let j = 0; j < this.adjList[i].length; j++) {
-          let a = i;
-          let b = this.adjList[i][j].first;
-          let c = this.adjList[i][j].second;
-
+          let a = i, b = this.adjList[i][j].first, c = this.adjList[i][j].second;
           let type;
           if (this.directed) type = 'to';
           else {
             if (a > b) continue;
             type = 'with';
           }
-
-          if (this.weighted) this.edgeList.push({from: a, to: b, label: String(c), arrows: type});
-          else this.edgeList.push({from: a, to: b, arrows: type});
+          if (this.weighted) this.edgeList.push({id: edgeId++, from: a, to: b, label: String(c), arrows: type});
+          else this.edgeList.push({id: edgeId++, from: a, to: b, arrows: type});
         }
       }
     },
     visualize: function () {
-      let nodes = new vis.DataSet(this.nodeList);
-      let edges = new vis.DataSet(this.edgeList);
-
-      let container = document.getElementById('network');
-      let data = {
-        nodes,
-        edges,
+      this._nodes = new vis.DataSet(this.nodeList);
+      this._edges = new vis.DataSet(this.edgeList);
+      const container = document.getElementById('network');
+      const options = {
+        edges: { smooth: this.isSmooth },
       };
-      let options = {
-        edges: {
-          smooth: this.isSmooth,
-        }
-      };
-
-      let network = new vis.Network(container, data, options);
-
+      if (this._network) this._network.destroy();
+      this._network = new vis.Network(container, {nodes: this._nodes, edges: this._edges}, options);
     },
     execute: function () {
       this.readInput();
+      if (!this.valid) return;
       this.setVis();
+      this.computeGraphInfo();
       this.visualize();
+      this.spResult = null; this.spNoPath = false;
+    },
+    // ── 最短経路 ────────────────────────────────────────
+    findAndHighlightPath: function () {
+      if (!this._nodes || !this._edges || this.V === 0) return;
+      const from = this.indexed ? this.spFrom - 1 : +this.spFrom;
+      const to   = this.indexed ? this.spTo   - 1 : +this.spTo;
+      if (isNaN(from) || isNaN(to) || from < 0 || from >= this.V || to < 0 || to >= this.V) return;
+      this.resetColors();
+      const result = this.weighted ? this.dijkstra(from, to) : this.bfsPath(from, to);
+      if (!result) { this.spResult = null; this.spNoPath = true; return; }
+      this.spResult = result.dist; this.spNoPath = false;
+      this.spPath = result.path.map(v => this.indexed ? v + 1 : v);
+      // 経路上のノードをオレンジ、始点を青、終点を赤でハイライト
+      this._nodes.update(result.path.map(v => ({id: v, color: {background: '#ffb347', border: '#e67e00'}})));
+      this._nodes.update([
+        {id: from, color: {background: '#4fc3f7', border: '#0288d1'}},
+        {id: to,   color: {background: '#ef5350', border: '#c62828'}},
+      ]);
+      for (let i = 0; i < result.path.length - 1; i++) {
+        const u = result.path[i], v = result.path[i + 1];
+        const e = this.edgeList.find(e => this.directed ? (e.from === u && e.to === v) : ((e.from === u && e.to === v) || (e.from === v && e.to === u)));
+        if (e !== undefined) this._edges.update([{id: e.id, color: {color: '#e67e00', highlight: '#e67e00'}}]);
+      }
+    },
+    resetPath: function () {
+      this.spResult = null; this.spNoPath = false; this.spPath = [];
+      this.resetColors();
+    },
+    dijkstra: function (start, end) {
+      const dist = new Array(this.V).fill(Infinity), prev = new Array(this.V).fill(-1);
+      dist[start] = 0;
+      const pq = [[0, start]];
+      while (pq.length) {
+        pq.sort((a, b) => a[0] - b[0]);
+        const [d, v] = pq.shift();
+        if (d > dist[v]) continue;
+        for (const p of this.adjList[v]) {
+          const nd = dist[v] + p.second;
+          if (nd < dist[p.first]) { dist[p.first] = nd; prev[p.first] = v; pq.push([nd, p.first]); }
+        }
+      }
+      if (dist[end] === Infinity) return null;
+      const path = []; let cur = end;
+      while (cur !== -1) { path.unshift(cur); cur = prev[cur]; }
+      return {path, dist: dist[end]};
+    },
+    bfsPath: function (start, end) {
+      const dist = new Array(this.V).fill(-1), prev = new Array(this.V).fill(-1);
+      dist[start] = 0; const q = [start]; let qi = 0;
+      while (qi < q.length) {
+        const v = q[qi++]; if (v === end) break;
+        for (const p of this.adjList[v]) {
+          if (dist[p.first] === -1) { dist[p.first] = dist[v] + 1; prev[p.first] = v; q.push(p.first); }
+        }
+      }
+      if (dist[end] === -1) return null;
+      const path = []; let cur = end;
+      while (cur !== -1) { path.unshift(cur); cur = prev[cur]; }
+      return {path, dist: dist[end]};
+    },
+    resetColors: function () {
+      if (!this._nodes || !this._edges) return;
+      this._nodes.update(this.nodeList.map(n => ({id: n.id, color: undefined})));
+      this._edges.update(this.edgeList.map(e => ({id: e.id, color: undefined})));
+    },
+    computeGraphInfo: function () {
+      const V = this.V;
+      const actualEdges = this.edgeList.length;
+
+      // 弱連結成分数を BFS で計算（有向グラフも無向として扱う）
+      const undirAdj = Array.from({length: V}, () => []);
+      for (let i = 0; i < V; i++) {
+        for (const pair of this.adjList[i]) {
+          undirAdj[i].push(pair.first);
+          undirAdj[pair.first].push(i);
+        }
+      }
+      const vis0 = new Array(V).fill(false);
+      let components = 0;
+      for (let i = 0; i < V; i++) {
+        if (!vis0[i]) {
+          components++;
+          const q = [i]; vis0[i] = true; let qi = 0;
+          while (qi < q.length) {
+            const v = q[qi++];
+            for (const nb of undirAdj[v]) { if (!vis0[nb]) { vis0[nb] = true; q.push(nb); } }
+          }
+        }
+      }
+
+      // 無向グラフの構造判定
+      const isTree   = !this.directed && actualEdges === V - 1 && components === 1;
+      const isForest = !this.directed && actualEdges === V - components && components > 1;
+      const isComplete = !this.directed && actualEdges === V * (V - 1) / 2;
+
+      // 二部グラフ判定（無向グラフ, BFS 2色塗り）
+      let isBipartite = false;
+      if (!this.directed) {
+        const color = new Array(V).fill(-1);
+        let ok = true;
+        for (let s = 0; s < V && ok; s++) {
+          if (color[s] !== -1) continue;
+          color[s] = 0;
+          const q = [s]; let qi = 0;
+          while (qi < q.length && ok) {
+            const v = q[qi++];
+            for (const nb of undirAdj[v]) {
+              if (color[nb] === -1) { color[nb] = 1 - color[v]; q.push(nb); }
+              else if (color[nb] === color[v]) ok = false;
+            }
+          }
+        }
+        isBipartite = ok && !isComplete;
+      }
+
+      // 有向グラフ: Kosaraju で SCC 計算
+      let sccCount = 0, isDAG = false, isStronglyConnected = false, topoOrder = null;
+      if (this.directed) {
+        const fin1 = new Array(V).fill(false);
+        const order = [];
+        for (let s = 0; s < V; s++) {
+          if (fin1[s]) continue;
+          const stk = [[s, 0]]; fin1[s] = true;
+          while (stk.length) {
+            const [v, idx] = stk[stk.length - 1];
+            if (idx < this.adjList[v].length) {
+              stk[stk.length - 1][1]++;
+              const nb = this.adjList[v][idx].first;
+              if (!fin1[nb]) { fin1[nb] = true; stk.push([nb, 0]); }
+            } else { stk.pop(); order.push(v); }
+          }
+        }
+        const revAdj = Array.from({length: V}, () => []);
+        for (let i = 0; i < V; i++) {
+          for (const pair of this.adjList[i]) revAdj[pair.first].push(i);
+        }
+        const fin2 = new Array(V).fill(false);
+        for (let i = order.length - 1; i >= 0; i--) {
+          if (fin2[order[i]]) continue;
+          sccCount++;
+          const stk = [order[i]]; fin2[order[i]] = true;
+          while (stk.length) {
+            const v = stk.pop();
+            for (const nb of revAdj[v]) { if (!fin2[nb]) { fin2[nb] = true; stk.push(nb); } }
+          }
+        }
+        isDAG = sccCount === V;
+        isStronglyConnected = sccCount === 1;
+
+        if (isDAG) {
+          const inDeg = new Array(V).fill(0);
+          for (let i = 0; i < V; i++) for (const pair of this.adjList[i]) inDeg[pair.first]++;
+          const q = []; let qi = 0;
+          for (let i = 0; i < V; i++) { if (inDeg[i] === 0) q.push(i); }
+          const topo = [];
+          while (qi < q.length) {
+            const v = q[qi++];
+            topo.push(this.indexed ? v + 1 : v);
+            for (const pair of this.adjList[v]) { if (--inDeg[pair.first] === 0) q.push(pair.first); }
+          }
+          topoOrder = topo;
+        }
+      }
+
+      this.graphInfo = {
+        visible: true, vertices: V, edges: actualEdges,
+        directed: this.directed, components, sccCount,
+        isTree, isForest, isComplete, isBipartite,
+        isDAG, isStronglyConnected, topoOrder,
+      };
+    },
+    generatePreset: function (type) {
+      const ri  = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const shf = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = ri(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+      switch (type) {
+        case 'star': {
+          const N = ri(8, 14);
+          const lines = [`${N} ${N - 1}`];
+          for (let i = 2; i <= N; i++) lines.push(`1 ${i}`);
+          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+        }
+        case 'path': {
+          const N = ri(8, 14);
+          const lines = [`${N} ${N - 1}`];
+          for (let i = 1; i < N; i++) lines.push(`${i} ${i + 1}`);
+          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+        }
+        case 'cycle': {
+          const N = ri(8, 14);
+          const lines = [`${N} ${N}`];
+          for (let i = 1; i < N; i++) lines.push(`${i} ${i + 1}`);
+          lines.push(`${N} 1`);
+          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+        }
+        case 'complete': {
+          const N = ri(5, 7);
+          const edges = [];
+          for (let i = 1; i <= N; i++) for (let j = i + 1; j <= N; j++) edges.push(`${i} ${j}`);
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+        }
+        case 'bipartite': {
+          const A = ri(4, 6), B = ri(4, 6), N = A + B;
+          const edges = [];
+          for (let i = 1; i <= A; i++)
+            for (let j = A + 1; j <= N; j++)
+              if (Math.random() < 0.45) edges.push(`${i} ${j}`);
+          if (edges.length === 0) edges.push(`1 ${A + 1}`);
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+        }
+        case 'weighted-tree': {
+          const N = ri(8, 13);
+          const perm = shf([...Array(N).keys()].map(i => i + 1));
+          const edges = [];
+          for (let i = 1; i < N; i++) {
+            const u = perm[i], v = perm[ri(0, i - 1)], w = ri(1, 20);
+            edges.push(`${u} ${v} ${w}`);
+          }
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: true, indexed: true };
+        }
+        case 'weighted-graph': {
+          const N = ri(7, 11);
+          const edges = [];
+          for (let i = 1; i <= N; i++)
+            for (let j = i + 1; j <= N; j++)
+              if (Math.random() < 0.35) edges.push(`${i} ${j} ${ri(1, 20)}`);
+          if (edges.length === 0) edges.push(`1 2 ${ri(1, 20)}`);
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: true, indexed: true };
+        }
+        case 'dag': {
+          const N = ri(8, 13);
+          const perm = shf([...Array(N).keys()].map(i => i + 1));
+          const edges = [];
+          for (let i = 0; i < N; i++)
+            for (let j = i + 1; j < N; j++)
+              if (Math.random() < 0.28) edges.push(`${perm[i]} ${perm[j]}`);
+          if (edges.length === 0) edges.push(`${perm[0]} ${perm[1]}`);
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: true, weighted: false, indexed: true };
+        }
+        default: return null;
+      }
+    },
+    loadPreset: function (preset) {
+      const data = this.generatePreset(preset.type);
+      if (!data) return;
+      this.format   = data.format;
+      this.directed = data.directed;
+      this.weighted = data.weighted;
+      this.indexed  = data.indexed;
+      this.inputText = data.text;
+      this.setPlaceHolder(data.format, data.directed, data.weighted, data.indexed);
+      // watch は非同期発火なので $nextTick 内でキャンセルする
+      this.$nextTick(() => {
+        clearTimeout(this._debounceTimer);
+        this.execute();
+      });
     },
     exportURL: function () {
       let inputData = this.inputText === "" ? this.placeHolder : this.inputText;
@@ -600,6 +892,13 @@ Vue.component('graphgraph', {
       if (this.isSmooth == false) this.isSmooth = true;
       else this.isSmooth = false;
     },
+  },
+  watch: {
+    inputText: function (val) {
+      if (val === '') return;
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = setTimeout(() => { this.execute(); }, 500);
+    }
   },
   mounted: function () {
     let param = location.search;

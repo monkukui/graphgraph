@@ -1,87 +1,559 @@
 /*============================================
-全般的なスタイル
+  CSS カスタムプロパティ（カラースキーム）
 ============================================*/
+:root {
+  --primary:       #3949ab;
+  --primary-dark:  #283593;
+  --primary-light: #9fa8da;
+  --bg:            #f5f7fa;
+  --surface:       #ffffff;
+  --border:        #e0e0e0;
+  --text:          #212121;
+  --text-muted:    #757575;
+  --success:       #43a047;
+  --danger:        #e53935;
+}
 
-html{
+/*============================================
+  グローバルリセット
+============================================*/
+html {
   scroll-behavior: smooth;
 }
 
 * {
-	margin:0; padding:0; 	/*全要素のマージン・パディングをリセット*/
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 textarea {
   resize: none;
 }
 
-div#hoge {
-  position: relative;
-  width: 100px;
-  top: -30px;
-  left: 330px;    
+body {
+  padding-top: 60px;
+  font-family: 'Lato', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/*============================================
+  ナビゲーションバー
+============================================*/
+nav.navbar {
+  background: var(--primary-dark) !important;
+  box-shadow: 0 2px 8px rgba(40, 53, 147, 0.35);
+}
+
+nav#navbar {
+  background: var(--primary-dark);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.nav-link:hover,
+.nav-item.active .nav-link {
+  opacity: 1;
+}
+
+/*============================================
+  メインコンテナ
+============================================*/
+div#main-div {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--surface);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.09);
+  border-radius: 0 0 10px 10px;
+  min-height: calc(100vh - 60px);
+}
+
+/*============================================
+  ヘッダー（ロゴ + バージョン）
+============================================*/
+#top {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 20px 40px 0;
 }
 
 div#logo {
-  position: relative;
-  left: 60px;
-  top: 10px;
+  /* position ハック除去 */
 }
 
+div#hoge {
+  /* position ハック除去 — pill バッジ化 */
+  position: static;
+  width: auto;
+  top: auto;
+  left: auto;
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--primary);
+  background: #e8eaf6;
+  border: 1px solid var(--primary-light);
+  border-radius: 20px;
+  padding: 3px 11px;
+  margin-bottom: 10px;
+}
+
+/*============================================
+  メインコンテンツエリア
+============================================*/
 div#graphgraph {
-  width: 950px;
-  margin:0 auto;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 40px 36px;
 }
 
 div#about {
-  width: 950;
-  margin:0 auto;
+  width: auto;
+  padding: 24px 40px 36px;
 }
 
-div#main-div {
-  width:1100px;
-  margin:0 auto;                     /*内容全体をセンタリング*/
-	background-color: rgb(256, 256, 256);                           /*内容全体の背景色*/
-  box-shadow: 0px 0px 10px 5px #888;
+/*============================================
+  入力テキストエリア
+============================================*/
+textarea#input_area {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 13.5px;
+  line-height: 1.65;
+  background: #fafafa;
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+textarea#input_area:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.18);
+  background: #fff;
+}
+
+/*============================================
+  グラフ可視化キャンバス
+============================================*/
+#network {
+  background: #fff;
+  width: 100%;
+  height: 480px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/*============================================
+  スムーズトグルエリア
+============================================*/
+.smooth-toggle-area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.smooth-toggle-area label {
+  cursor: pointer;
+  margin: 0;
+}
+
+.smooth-toggle-area input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+/*============================================
+  ツールバー（ドロップダウン + ボタン行）
+============================================*/
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0 4px;
+}
+
+/*============================================
+  ドロップダウンボタン（設定系）
+============================================*/
+.btn.btn-secondary,
+.btn-secondary.dropdown-toggle {
+  background: #f1f3f4 !important;
+  border: 1.5px solid var(--border) !important;
+  color: var(--text) !important;
+  font-size: 0.84rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition: background 0.15s, border-color 0.15s;
+  box-shadow: none !important;
+}
+
+.btn.btn-secondary:hover,
+.btn-secondary.dropdown-toggle:hover {
+  background: #e4e7ea !important;
+  border-color: #bdbdbd !important;
+}
+
+.btn.btn-secondary:focus,
+.btn-secondary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.2) !important;
+}
+
+/*============================================
+  VISUALIZE!! ボタン
+============================================*/
+.btn.btn-outline-primary {
+  color: var(--primary) !important;
+  border: 2px solid var(--primary) !important;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 5px 20px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn.btn-outline-primary:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+/*============================================
+  URL Export ボタン
+============================================*/
+.btn.btn-outline-success {
+  color: var(--success) !important;
+  border: 2px solid var(--success) !important;
+  font-weight: 600;
+  font-size: 0.84rem;
+  padding: 5px 14px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn.btn-outline-success:hover {
+  background: var(--success) !important;
+  color: #fff !important;
+}
+
+/*============================================
+  エラーアラート
+============================================*/
+.alert.alert-danger {
+  border-radius: 6px;
+  border: 1px solid #ffcdd2;
+  border-left: 4px solid var(--danger);
+  background: #fff5f5;
+  margin-bottom: 16px;
+  margin-top: 4px;
+}
+
+.alert.alert-danger a.alert-link {
+  color: var(--danger);
+}
+
+/*============================================
+  フッター
+============================================*/
+#foot {
+  padding: 14px 40px 16px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+#footer {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/*============================================
+  ユーティリティ
+============================================*/
+.space {
+  margin-right: 6px;
+}
+
+/* howtouse.html の vis.js プレビューカード */
+.smooth {
+  position: relative;
+  top: 3px;
 }
 
 .bd-example {
-    position: relative;
-    padding: 1rem;
-    margin: 1rem -15px 0;
-    border: solid #f8f9fa;
-    border-width: .2rem 0 0;
+  position: relative;
+  padding: 1rem;
+  margin: 1rem -15px 0;
+  border: solid #f8f9fa;
+  border-width: 0.2rem 0 0;
 }
-
-
-body {
-    padding-top: 60px;
-    font-family: Lato;
-    background: rgb(245, 245, 245);
-    margin-left: 0 auto;
-    margin-right: 0 auto;
-}
-nav#navbar {
-    background: rgb(0, 0, 0);
-}
-
-#network {
-    background: rgb(255, 255, 255);
-    width:  670px;                 /* メイン画面の横幅 */
-    height: 506px;                  /* メイン画面の縦幅 */
-    border: 1px solid #000;         /* 境界線 */
-}
-
 
 li#menu {
-    list-style-type:none;	        /*リストマーカー無しにする*/
-    display:inline;		            /*リスト項目をインライン表示にする*/
+  list-style-type: none;
+  display: inline;
 }
 
-.space {
-  margin-right: 5px;
+/*============================================
+  プリセットエリア
+============================================*/
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
-.smooth {
-    position: relative;
-    top: 3px;
+.preset-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-right: 2px;
+}
+
+.btn-preset {
+  font-size: 0.78rem;
+  padding: 3px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: #f8f9fa;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  line-height: 1.6;
+}
+
+.btn-preset:hover {
+  background: #e8eaf6;
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/*============================================
+  グラフ情報パネル
+============================================*/
+.graph-info-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  padding: 9px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-value {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.tree-badge, .forest-badge {
+  border-radius: 20px;
+  padding: 2px 11px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.tree-badge {
+  background: #e8f5e9;
+  color: var(--success);
+  border: 1px solid #a5d6a7;
+}
+
+.forest-badge {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+}
+
+.dag-badge {
+  background: #f3e5f5;
+  color: #6a1b9a;
+  border: 1px solid #ce93d8;
+}
+
+.scc-badge {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+
+.complete-badge {
+  background: #fce4ec;
+  color: #880e4f;
+  border: 1px solid #f48fb1;
+}
+
+.bipartite-badge {
+  background: #e0f7fa;
+  color: #006064;
+  border: 1px solid #80deea;
+}
+
+/*============================================
+  最短経路 / 探索アニメ
+============================================*/
+.feature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.feature-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.84rem;
+  flex-wrap: wrap;
+}
+
+.feature-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.feature-arrow {
+  color: var(--text-muted);
+}
+
+.node-input {
+  width: 60px;
+  padding: 3px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  font-size: 0.84rem;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.node-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+
+.btn-feature {
+  padding: 3px 12px;
+  border: 1.5px solid var(--primary-light);
+  border-radius: 5px;
+  background: #e8eaf6;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-feature:hover { background: #c5cae9; }
+
+.btn-feature-reset {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: #f1f3f4;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.feature-result {
+  color: var(--text);
+  font-size: 0.84rem;
+}
+.feature-noresult {
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/*============================================
+  最短経路パネル
+============================================*/
+.sp-path-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  background: #fff8e1;
+  border: 1.5px solid #ffe082;
+  border-radius: 6px;
+  font-size: 0.83rem;
+}
+
+/*============================================
+  トポロジカル順序
+============================================*/
+.topo-order {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  background: #f8f0ff;
+  border: 1.5px solid #ce93d8;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.83rem;
+}
+
+.topo-label {
+  color: #6a1b9a;
+  font-weight: 600;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.topo-node {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.topo-arrow {
+  color: #9c27b0;
+  font-weight: 400;
 }
