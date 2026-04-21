@@ -841,13 +841,68 @@ Vue.component('graphgraph', {
 
       this.placeHolder = container.placeholder;
 
-      // 入力テキストがある場合はフォーマット変更で再実行
-      if (this.inputText !== '') {
+      // 有効なグラフがある場合は新しい形式に変換
+      if (this.inputText !== '' && this.V > 0 && this.adjList && this.adjList.length === this.V) {
+        const converted = this.graphToText(this.format);
+        if (converted !== null) {
+          this.inputText = converted;
+        }
         this.$nextTick(() => {
           clearTimeout(this._debounceTimer);
           this.execute();
         });
       }
+    },
+
+    // adjList から指定形式のテキストを生成する
+    graphToText: function (fmt) {
+      if (!this.adjList || this.V === 0) return null;
+      const N = this.V;
+      const base = this.indexed ? 1 : 0;
+
+      if (fmt === 'matrix') {
+        const mat = Array.from({length: N}, () => new Array(N).fill(0));
+        for (let i = 0; i < N; i++) {
+          for (const p of this.adjList[i]) {
+            mat[i][p.first] = this.weighted ? p.second : 1;
+          }
+        }
+        const lines = [String(N)];
+        for (let i = 0; i < N; i++) lines.push(mat[i].join(' '));
+        return lines.join('\n');
+      }
+
+      if (fmt === 'adjlist') {
+        const lines = [String(N)];
+        for (let i = 0; i < N; i++) {
+          const vid = i + base;
+          const deg = this.adjList[i].length;
+          if (this.weighted) {
+            const parts = this.adjList[i].map(p => `${p.first + base} ${p.second}`);
+            lines.push(`${vid} ${deg}` + (deg > 0 ? ' ' + parts.join(' ') : ''));
+          } else {
+            const nbs = this.adjList[i].map(p => p.first + base);
+            lines.push(`${vid} ${deg}` + (deg > 0 ? ' ' + nbs.join(' ') : ''));
+          }
+        }
+        return lines.join('\n');
+      }
+
+      // normal 形式: adjList から辺を抽出
+      const edges = [];
+      const seen = new Set();
+      for (let i = 0; i < N; i++) {
+        for (const p of this.adjList[i]) {
+          if (!this.directed) {
+            const key = Math.min(i, p.first) + ',' + Math.max(i, p.first);
+            if (seen.has(key)) continue;
+            seen.add(key);
+          }
+          const u = i + base, v = p.first + base;
+          edges.push(this.weighted ? `${u} ${v} ${p.second}` : `${u} ${v}`);
+        }
+      }
+      return `${N} ${edges.length}\n` + edges.join('\n');
     },
 
     validator: function (arr) {
