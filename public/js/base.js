@@ -791,10 +791,12 @@ Vue.component('graphgraph', {
 
     setPlaceHolder: function (format, directed, weighted, indexed) {
 
+      const oldFormat = this.format;
       if (format != -1) this.format = format;
       if (weighted != -1) this.weighted = weighted;
       if (directed != -1) this.directed = directed;
       if (indexed != -1) this.indexed = indexed;
+      const formatChanged = (format != -1 && format !== oldFormat);
 
       let container = document.getElementById("input_area");
       const f = this.format;
@@ -841,8 +843,8 @@ Vue.component('graphgraph', {
 
       this.placeHolder = container.placeholder;
 
-      // 有効なグラフがある場合は新しい形式に変換
-      if (this.inputText !== '' && this.V > 0 && this.adjList && this.adjList.length === this.V) {
+      // フォーマットが変わった場合、既存グラフを新しい形式に変換
+      if (formatChanged && this.inputText !== '' && this.V > 0 && this.adjList && this.adjList.length === this.V) {
         const converted = this.graphToText(this.format);
         if (converted !== null) {
           this.inputText = converted;
