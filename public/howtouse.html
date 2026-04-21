@@ -72,11 +72,29 @@
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1756269759898758" crossorigin="anonymous"></script>
 
+<!-- Firebase Analytics -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyCvOezpw-1wY3J5uBk3VLhe58vNBkuPs_w",
+    authDomain: "hello-world-494ec.firebaseapp.com",
+    projectId: "hello-world-494ec",
+    storageBucket: "hello-world-494ec.firebasestorage.app",
+    messagingSenderId: "619995699844",
+    appId: "1:619995699844:web:41ce8deadb1eb203",
+    measurementId: "G-V8SJ4D5EKB"
+  });
+  firebase.analytics();
+</script>
+
 <!-- base.css を読み込む -->
 <link href="css/base.css" rel="stylesheet">
 </head>
 <body>
 
+  <div id="page-wrapper">
+  <div id="ad-sidebar-spacer"></div>
   <div id="main-div">
   <div id="app">
     <top></top>
@@ -87,18 +105,25 @@
   <div id="ad-area">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-1756269759898758"
-         data-ad-slot="5124840958"
          data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
+         data-full-width-responsive="true"
+         data-ad-client="ca-pub-1756269759898758"
+         data-ad-slot="5124840958"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
   </div>
-  
-  
-  
+  <div id="ad-sidebar">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1756269759898758"
+         data-ad-slot="2273486330"
+         data-ad-format="vertical"
+         data-full-width-responsive="false"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  </div>
 
-  
+
   <!-- vue.js -->
   <!-- 開発バージョン、便利なコンソールの警告が含まれています -->
   <!-- script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script -->

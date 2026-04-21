@@ -18,9 +18,24 @@ function Pair(first, second) {
 // ── 多言語対応 ───────────────────────────────────────
 const appState = Vue.observable({ lang: localStorage.getItem('lang') || 'ja' });
 
+function updateMeta(lang) {
+  var m = translations[lang].meta;
+  document.title = m.title;
+  document.documentElement.lang = lang;
+  document.querySelector('meta[name="description"]').setAttribute('content', m.description);
+  document.querySelector('meta[property="og:title"]').setAttribute('content', m.title);
+  document.querySelector('meta[property="og:description"]').setAttribute('content', m.description);
+  document.querySelector('meta[name="twitter:title"]').setAttribute('content', m.title);
+  document.querySelector('meta[name="twitter:description"]').setAttribute('content', m.description);
+}
+
 const translations = {
   ja: {
-    nav: { home: 'ホーム', howToUse: '使い方', about: 'このページについて' },
+    meta: {
+      title: 'GRAPH × GRAPH：競技プログラミングにおけるグラフ可視化サイト',
+      description: '競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです',
+    },
+    nav: { home: 'ホーム', howToUse: '使い方', about: 'このページについて', articles: 'AtCoder 解説' },
     desc: '競技プログラミングにおけるグラフ問題の入力例を可視化するサイトです。',
     feedbackLink: '改善案募集中',
     smoothEdges: '辺を滑らかに',
@@ -99,6 +114,9 @@ const translations = {
       matrixTitle: 'matrix 形式（隣接行列）',
       matrixDesc: '最初の行に頂点数 N を書き、続く N 行に N × N の隣接行列を書きます。重みなしの場合は 0/1、重みありの場合は辺の重み（なければ 0）を書きます。',
       matrixLabels: ['重みなし', '重みあり'],
+      adjlistTitle: 'adjlist 形式（隣接リスト）',
+      adjlistDesc: '最初の行に頂点数 N を書き、続く N 行に「頂点ID 次数 隣接頂点1 隣接頂点2 ...」を書きます。重みありの場合は「頂点ID 次数 隣接頂点1 重み1 隣接頂点2 重み2 ...」と書きます。',
+      adjlistLabels: ['重みなし', '重みあり'],
       featuresTitle: '各機能の説明',
       faqTitle: 'よくある質問',
       features: [
@@ -163,13 +181,24 @@ const translations = {
       ],
       howtoMore: '詳しい使い方はこちら',
     },
+    articles: {
+      title: 'AtCoder グラフ問題 解説',
+      description: '毎週の AtCoder コンテストに出題されるグラフ問題を GRAPH × GRAPH で可視化しながら解説します。',
+      empty: 'まだ記事がありません。',
+      problem: '問題',
+      comingSoon: '準備中...',
+    },
     footer: {
       privacy: 'プライバシーポリシー',
       contact: 'お問い合わせ',
     },
   },
   en: {
-    nav: { home: 'Home', howToUse: 'How to use', about: 'About' },
+    meta: {
+      title: 'GRAPH × GRAPH: Graph Visualizer for Competitive Programming',
+      description: 'A tool to visualize graph problems in competitive programming',
+    },
+    nav: { home: 'Home', howToUse: 'How to use', about: 'About', articles: 'AtCoder Articles' },
     desc: 'A tool to visualize graph problems in competitive programming.',
     feedbackLink: 'Feedback welcome',
     smoothEdges: 'Smooth edges',
@@ -248,6 +277,9 @@ const translations = {
       matrixTitle: 'Matrix format (adjacency matrix)',
       matrixDesc: 'First line: N. Next N lines: N×N adjacency matrix. Use 0/1 for unweighted, or edge weight (0 if absent) for weighted.',
       matrixLabels: ['Unweighted', 'Weighted'],
+      adjlistTitle: 'Adjlist format (adjacency list)',
+      adjlistDesc: 'First line: N. Next N lines: "vertex_id degree neighbor1 neighbor2 ...". For weighted: "vertex_id degree neighbor1 weight1 neighbor2 weight2 ...".',
+      adjlistLabels: ['Unweighted', 'Weighted'],
       featuresTitle: 'Feature Details',
       faqTitle: 'FAQ',
       features: [
@@ -312,6 +344,13 @@ const translations = {
       ],
       howtoMore: 'See full guide',
     },
+    articles: {
+      title: 'AtCoder Graph Problem Articles',
+      description: 'Weekly explanations of graph problems from AtCoder contests, visualized with GRAPH × GRAPH.',
+      empty: 'No articles yet.',
+      problem: 'Problem',
+      comingSoon: 'Coming soon...',
+    },
     footer: {
       privacy: 'Privacy Policy',
       contact: 'Contact',
@@ -319,13 +358,19 @@ const translations = {
   },
 };
 
+updateMeta(appState.lang);
+
 Vue.mixin({
   computed: {
     $tl() { return translations[appState.lang]; },
     $lang() { return appState.lang; },
   },
   methods: {
-    $setLang(lang) { appState.lang = lang; localStorage.setItem('lang', lang); },
+    $setLang(lang) {
+      appState.lang = lang;
+      localStorage.setItem('lang', lang);
+      updateMeta(lang);
+    },
   },
 });
 
@@ -342,31 +387,39 @@ Vue.component('navbar', {
 
   template: `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
-    <a class="navbar-brand" href="index.html"> <span style="margin-right: 1em;"></span> <font size="5">GRAPH × GRAPH</font></a>
+    <a class="navbar-brand" href="/index.html"> <span style="margin-right: 1em;"></span> <font size="5">GRAPH × GRAPH</font></a>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <div>
           <li v-if="isIndex" class="nav-item active">
-            <a class="nav-link" href="index.html">{{ $tl.nav.home }} <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/index.html">{{ $tl.nav.home }} <span class="sr-only">(current)</span></a>
           </li>
           <li v-else class="nav-item">
-            <a class="nav-link" href="index.html">{{ $tl.nav.home }}</a>
+            <a class="nav-link" href="/index.html">{{ $tl.nav.home }}</a>
           </li>
         </div>
         <div>
           <li v-if="isHowtouse" class="nav-item active">
-            <a class="nav-link" href="howtouse.html">{{ $tl.nav.howToUse }}<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/howtouse.html">{{ $tl.nav.howToUse }}<span class="sr-only">(current)</span></a>
           </li>
           <li v-else class="nav-item">
-            <a class="nav-link" href="howtouse.html">{{ $tl.nav.howToUse }}</a>
+            <a class="nav-link" href="/howtouse.html">{{ $tl.nav.howToUse }}</a>
           </li>
         </div>
         <div>
           <li v-if="isAbout" class="nav-item active">
-            <a class="nav-link" href="about.html">{{ $tl.nav.about }}<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/about.html">{{ $tl.nav.about }}<span class="sr-only">(current)</span></a>
           </li>
           <li v-else class="nav-item">
-            <a class="nav-link" href="about.html">{{ $tl.nav.about }}</a>
+            <a class="nav-link" href="/about.html">{{ $tl.nav.about }}</a>
+          </li>
+        </div>
+        <div>
+          <li v-if="isArticles" class="nav-item active">
+            <a class="nav-link" href="/articles.html">{{ $tl.nav.articles }}<span class="sr-only">(current)</span></a>
+          </li>
+          <li v-else class="nav-item">
+            <a class="nav-link" href="/articles.html">{{ $tl.nav.articles }}</a>
           </li>
         </div>
       </ul>
@@ -399,6 +452,10 @@ Vue.component('navbar', {
 
     isAbout() {
       return this.pagename == 'about'
+    },
+
+    isArticles() {
+      return this.pagename == 'articles'
     }
   }
 })
@@ -430,9 +487,9 @@ Vue.component('foot', {
     <div id="foot">
       <div class="dropdown-divider"></div>
       <div class="footer-links" align="center">
-        <a href="privacy.html">{{ $tl.footer.privacy }}</a>
+        <a href="/privacy.html">{{ $tl.footer.privacy }}</a>
         <span class="footer-sep">|</span>
-        <a href="contact.html">{{ $tl.footer.contact }}</a>
+        <a href="/contact.html">{{ $tl.footer.contact }}</a>
       </div>
       <div id="footer" align="center"><small>Copyright (c) monkukui All Right Reserved.</small></div>
     </div>
@@ -441,6 +498,11 @@ Vue.component('foot', {
 
 
 Vue.component('graphgraph', {
+  props: {
+    mini: { type: Boolean, default: false },
+    initialData: { type: String, default: '' },
+    initialDirected: { type: Boolean, default: false },
+  },
   template: `
     <div id="graphgraph">
 
@@ -448,6 +510,7 @@ Vue.component('graphgraph', {
         <div v-if="toastVisible" class="toast-notification">{{ toastMessage }}</div>
       </transition>
 
+      <template v-if="!mini">
       <div class="preset-row">
         <span class="preset-label" @click="funClickCount++; if(funClickCount >= 5) showFunPresets = true;" style="cursor: default;">{{ $lang === 'ja' ? 'サンプル:' : 'Preset:' }}</span>
         <button v-for="p in presetTypes" :key="p" class="btn-preset" v-on:click="loadPreset(p)">{{ $tl.presets[p] }}</button>
@@ -461,36 +524,33 @@ Vue.component('graphgraph', {
         {{ $tl.desc }}
         <a href="https://twitter.com/monkukui/status/1413176697189400587?s=20" style="font-size:0.82rem; margin-left:8px;">{{ $tl.feedbackLink }}</a>
       </p>
+      </template>
 
       <div class="main-layout">
         <div class="main-layout-editor">
-          <div class="editor-toolbar">
-            <button class="btn-editor" v-on:click="undoInput" :disabled="undoStack.length === 0" :title="$tl.editor.undo + ' (Ctrl+Z)'">↩ {{ $tl.editor.undo }}</button>
-            <button class="btn-editor" v-on:click="redoInput" :disabled="redoStack.length === 0" :title="$tl.editor.redo + ' (Ctrl+Y)'">↪ {{ $tl.editor.redo }}</button>
-            <button class="btn-editor" v-on:click="copyInput" :disabled="!inputText" :title="$tl.editor.copy">⧉ {{ $tl.editor.copy }}</button>
-          </div>
-          <div class="editor-wrapper" :class="{'input-error': !valid}">
+          <div class="editor-wrapper" :class="{'input-error': !valid}" :style="mini ? 'height: 180px' : ''">
             <div class="line-numbers" ref="lineNumbers">
               <span v-for="n in lineCount" :key="n">{{ n }}</span>
             </div>
             <textarea id="input_area" v-model="inputText" rows="22" placeholder="" @scroll="syncLineNumbers" @keydown="handleEditorKeydown"></textarea>
           </div>
-          <div v-if="!valid" class="inline-error">{{ errorMessage }}　<a href="howtouse.html">{{ $tl.howtouseLink }}</a></div>
+          <div v-if="!valid" class="inline-error">{{ errorMessage }}　<a href="/howtouse.html">{{ $tl.howtouseLink }}</a></div>
         </div>
         <div class="main-layout-graph">
           <div class="network-wrapper">
-            <div id="network"></div>
+            <div id="network" :style="mini ? 'height: 180px' : ''"></div>
             <div v-if="isLoading" class="spinner-overlay">
               <div class="spinner"></div>
             </div>
           </div>
-          <div class="smooth-toggle-area">
+          <div v-if="!mini" class="smooth-toggle-area">
             <label for="smoothCheckbox">{{ $tl.smoothEdges }}</label>
             <input id="smoothCheckbox" type="checkbox" v-model="isSmooth" />
           </div>
         </div>
       </div>
 
+      <template v-if="!mini">
       <div class="settings-panel">
         <div class="settings-panel-dropdowns">
           <div class="btn-group">
@@ -518,11 +578,11 @@ Vue.component('graphgraph', {
             </div>
           </div>
           <div class="btn-group">
-            <button v-if="format" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
-            <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">{{ format }}</button>
             <div class="dropdown-menu">
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(false, -1, -1, -1)">matrix</button>
-              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder(true, -1, -1, -1)">normal</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder('normal', -1, -1, -1)">normal</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder('matrix', -1, -1, -1)">matrix</button>
+              <button class="dropdown-item" type="button" v-on:click="setPlaceHolder('adjlist', -1, -1, -1)">adjlist</button>
             </div>
           </div>
         </div>
@@ -541,7 +601,7 @@ Vue.component('graphgraph', {
           <label class="random-gen-field-label">N</label>
           <input type="number" v-model.number="randomN" class="random-gen-input" :placeholder="$tl.randomGen.auto" min="1" :max="maxRandomN">
         </div>
-        <div v-if="format && showEdgeCount" class="random-gen-field">
+        <div v-if="format !== 'matrix' && showEdgeCount" class="random-gen-field">
           <label class="random-gen-field-label">E</label>
           <input type="number" v-model.number="randomE" class="random-gen-input" :placeholder="$tl.randomGen.auto" min="0">
         </div>
@@ -632,13 +692,14 @@ Vue.component('graphgraph', {
           </div>
         </div>
       </div>
+      </template>
     </div>
   `,
 
   data: function () {
     return {
       // 不明瞭だけど、こうするしかなかったんです...
-      format: true,      // true := normal, false := matrix
+      format: 'normal',  // 'normal' | 'matrix' | 'adjlist'
       directed: false,   // true := directed, false := undirected
       weighted: false,   // true := weighted, false := undirected
       indexed: true,     // true := 1-indexed, false := 0-indexed
@@ -716,7 +777,7 @@ Vue.component('graphgraph', {
       return ['random', 'connected', 'bipartite'].includes(this.randomType);
     },
     maxRandomN() {
-      if (!this.format) return 20;
+      if (this.format === 'matrix') return 20;
       if (this.randomType === 'complete') return 15;
       return 500;
     },
@@ -736,41 +797,57 @@ Vue.component('graphgraph', {
       if (indexed != -1) this.indexed = indexed;
 
       let container = document.getElementById("input_area");
+      const f = this.format;
 
       // 0-indexed 重みなし無向グラフ
-      if (!this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
-      if (!this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+      if (!this.indexed && !this.weighted && !this.directed && f === 'normal') container.placeholder = "4 3\n0 1\n1 2\n2 3";
+      if (!this.indexed && !this.weighted && !this.directed && f === 'matrix') container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+      if (!this.indexed && !this.weighted && !this.directed && f === 'adjlist') container.placeholder = "4\n0 2 1 3\n1 2 0 2\n2 2 1 3\n3 2 0 2";
 
       // 0-indexed 重みなし有向グラフ
-      if (!this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1\n1 2\n2 3";
-      if (!this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+      if (!this.indexed && !this.weighted && this.directed && f === 'normal') container.placeholder = "4 3\n0 1\n1 2\n2 3";
+      if (!this.indexed && !this.weighted && this.directed && f === 'matrix') container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+      if (!this.indexed && !this.weighted && this.directed && f === 'adjlist') container.placeholder = "4\n0 1 1\n1 1 2\n2 1 3\n3 0";
 
       // 0-indexed 重みあり無向グラフ
-      if (!this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
-      if (!this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+      if (!this.indexed && this.weighted && !this.directed && f === 'normal') container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
+      if (!this.indexed && this.weighted && !this.directed && f === 'matrix') container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+      if (!this.indexed && this.weighted && !this.directed && f === 'adjlist') container.placeholder = "4\n0 2 1 3 3 10\n1 2 0 3 2 2\n2 2 1 2 3 10\n3 2 0 10 2 10";
 
       // 0-indexed 重みあり有向グラフ
-      if (!this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
-      if (!this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
-
+      if (!this.indexed && this.weighted && this.directed && f === 'normal') container.placeholder = "4 3\n0 1 3\n1 2 2\n2 3 10";
+      if (!this.indexed && this.weighted && this.directed && f === 'matrix') container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
+      if (!this.indexed && this.weighted && this.directed && f === 'adjlist') container.placeholder = "4\n0 1 1 3\n1 1 2 2\n2 1 3 10\n3 0";
 
       // 1-indexed 重みなし無向グラフ
-      if (this.indexed && !this.weighted && !this.directed && this.format) container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
-      if (this.indexed && !this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+      if (this.indexed && !this.weighted && !this.directed && f === 'normal') container.placeholder = "10 9\n1 2\n1 3\n1 4\n1 5\n1 6\n1 7\n1 8\n1 9\n1 10";
+      if (this.indexed && !this.weighted && !this.directed && f === 'matrix') container.placeholder = "4\n0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0";
+      if (this.indexed && !this.weighted && !this.directed && f === 'adjlist') container.placeholder = "4\n1 2 2 4\n2 2 1 3\n3 2 2 4\n4 2 1 3";
 
       // 1-indexed 重みなし有向グラフ
-      if (this.indexed && !this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2\n2 3\n3 4";
-      if (this.indexed && !this.weighted && this.directed && !this.format) container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+      if (this.indexed && !this.weighted && this.directed && f === 'normal') container.placeholder = "4 3\n1 2\n2 3\n3 4";
+      if (this.indexed && !this.weighted && this.directed && f === 'matrix') container.placeholder = "4\n0 1 0 0\n0 0 1 0\n0 0 0 1\n0 0 0 0";
+      if (this.indexed && !this.weighted && this.directed && f === 'adjlist') container.placeholder = "4\n1 1 2\n2 1 3\n3 1 4\n4 0";
 
       // 1-indexed 重みあり無向グラフ
-      if (this.indexed && this.weighted && !this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
-      if (this.indexed && this.weighted && !this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+      if (this.indexed && this.weighted && !this.directed && f === 'normal') container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
+      if (this.indexed && this.weighted && !this.directed && f === 'matrix') container.placeholder = "4\n0 3 0 0\n3 0 2 0\n0 2 0 10\n0 0 10 0";
+      if (this.indexed && this.weighted && !this.directed && f === 'adjlist') container.placeholder = "4\n1 2 2 3 4 10\n2 2 1 3 3 2\n3 2 2 2 4 10\n4 2 1 10 3 10";
 
       // 1-indexed 重みあり有向グラフ
-      if (this.indexed && this.weighted && this.directed && this.format) container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
-      if (this.indexed && this.weighted && this.directed && !this.format) container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
+      if (this.indexed && this.weighted && this.directed && f === 'normal') container.placeholder = "4 3\n1 2 3\n2 3 2\n3 4 10";
+      if (this.indexed && this.weighted && this.directed && f === 'matrix') container.placeholder = "4\n0 3 0 0\n0 0 2 0\n0 0 0 10\n0 0 0 0";
+      if (this.indexed && this.weighted && this.directed && f === 'adjlist') container.placeholder = "4\n1 1 2 3\n2 1 3 2\n3 1 4 10\n4 0";
 
       this.placeHolder = container.placeholder;
+
+      // 入力テキストがある場合はフォーマット変更で再実行
+      if (this.inputText !== '') {
+        this.$nextTick(() => {
+          clearTimeout(this._debounceTimer);
+          this.execute();
+        });
+      }
     },
 
     validator: function (arr) {
@@ -792,7 +869,7 @@ Vue.component('graphgraph', {
         return [];
       }
 
-      if (!this.format) {
+      if (this.format === 'matrix') {
 
         // 隣接行列
         let n = arr[0];
@@ -837,6 +914,17 @@ Vue.component('graphgraph', {
             }
           }
         }
+      } else if (this.format === 'adjlist') {
+
+        // 隣接リスト形式: 行ごとに解析するため、ここでは基本チェックのみ
+        let n = arr[0];
+        // 行単位の詳細検証は readInput 側で行う（arr はフラット配列のため行構造が失われている）
+        if (arr.length < 1) {
+          this.errorMessage = this.$tl.errors.tooFew;
+          this.valid = false;
+          return [];
+        }
+
       } else {
 
         // AtCoder 形式
@@ -942,11 +1030,10 @@ Vue.component('graphgraph', {
       if (!this.valid) return;
 
       this.V = arr[0];
-      this.E = arr[1];
       this.adjList = new Array(this.V);
       for (let i = 0; i < this.V; i++) this.adjList[i] = new Array(0);
 
-      if (!this.format) {
+      if (this.format === 'matrix') {
         // 隣接行列
         for (let i = 0; i < this.V; i++) {
           for (let j = 0; j < this.V; j++) {
@@ -958,8 +1045,36 @@ Vue.component('graphgraph', {
             this.adjList[a].push(new Pair(b, c));
           }
         }
+      } else if (this.format === 'adjlist') {
+        // 隣接リスト形式: inputText を行ごとに解析
+        const lines = this.inputText.split('\n').map(l => l.trim()).filter(l => l !== '');
+        if (lines.length < this.V + 1) {
+          this.errorMessage = this.$tl.errors.tooFew;
+          this.valid = false;
+          return;
+        }
+        for (let li = 1; li <= this.V; li++) {
+          const nums = lines[li].split(/\s+/).map(Number);
+          // nums[0] = vertex_id, nums[1] = degree, nums[2..] = neighbors (+ optional weights)
+          const deg = nums[1];
+          if (this.weighted) {
+            for (let k = 0; k < deg; k++) {
+              let nb = nums[2 + k * 2];
+              let w = nums[2 + k * 2 + 1];
+              if (this.indexed) nb--;
+              this.adjList[this.indexed ? nums[0] - 1 : nums[0]].push(new Pair(nb, w));
+            }
+          } else {
+            for (let k = 0; k < deg; k++) {
+              let nb = nums[2 + k];
+              if (this.indexed) nb--;
+              this.adjList[this.indexed ? nums[0] - 1 : nums[0]].push(new Pair(nb, 1));
+            }
+          }
+        }
       } else {
         // AtCoder 形式
+        this.E = arr[1];
         if (this.weighted) {
           // 重み付き
           for (let i = 0; i < this.E; i++) {
@@ -989,6 +1104,14 @@ Vue.component('graphgraph', {
             if (!this.directed) this.adjList[b].push(new Pair(a, c));
           }
         }
+      }
+
+      // matrix / adjlist の場合は adjList から辺数を計算
+      if (this.format !== 'normal') {
+        let edgeCount = 0;
+        for (let i = 0; i < this.V; i++) edgeCount += this.adjList[i].length;
+        if (!this.directed) edgeCount /= 2;
+        this.E = edgeCount;
       }
     },
     // adjList から を visの情報に変換
@@ -1411,26 +1534,26 @@ Vue.component('graphgraph', {
           const N = ri(8, 14);
           const lines = [`${N} ${N - 1}`];
           for (let i = 2; i <= N; i++) lines.push(`1 ${i}`);
-          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: lines.join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'path': {
           const N = ri(8, 14);
           const lines = [`${N} ${N - 1}`];
           for (let i = 1; i < N; i++) lines.push(`${i} ${i + 1}`);
-          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: lines.join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'cycle': {
           const N = ri(8, 14);
           const lines = [`${N} ${N}`];
           for (let i = 1; i < N; i++) lines.push(`${i} ${i + 1}`);
           lines.push(`${N} 1`);
-          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: lines.join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'complete': {
           const N = ri(5, 7);
           const edges = [];
           for (let i = 1; i <= N; i++) for (let j = i + 1; j <= N; j++) edges.push(`${i} ${j}`);
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'bipartite': {
           const A = ri(4, 6), B = ri(4, 6), N = A + B;
@@ -1439,7 +1562,7 @@ Vue.component('graphgraph', {
             for (let j = A + 1; j <= N; j++)
               if (Math.random() < 0.45) edges.push(`${i} ${j}`);
           if (edges.length === 0) edges.push(`1 ${A + 1}`);
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'weighted-tree': {
           const N = ri(8, 13);
@@ -1449,7 +1572,7 @@ Vue.component('graphgraph', {
             const u = perm[i], v = perm[ri(0, i - 1)], w = ri(1, 20);
             edges.push(`${u} ${v} ${w}`);
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: true, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: true, indexed: true };
         }
         case 'weighted-graph': {
           const N = ri(7, 11);
@@ -1458,7 +1581,7 @@ Vue.component('graphgraph', {
             for (let j = i + 1; j <= N; j++)
               if (Math.random() < 0.35) edges.push(`${i} ${j} ${ri(1, 20)}`);
           if (edges.length === 0) edges.push(`1 2 ${ri(1, 20)}`);
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: true, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: true, indexed: true };
         }
         case 'dag': {
           const N = ri(8, 13);
@@ -1468,14 +1591,14 @@ Vue.component('graphgraph', {
             for (let j = i + 1; j < N; j++)
               if (Math.random() < 0.28) edges.push(`${perm[i]} ${perm[j]}`);
           if (edges.length === 0) edges.push(`${perm[0]} ${perm[1]}`);
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: true, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: true, weighted: false, indexed: true };
         }
         // ── おもしろグラフ ──
         case 'big-star': {
           const N = 200;
           const lines = [`${N} ${N - 1}`];
           for (let i = 2; i <= N; i++) lines.push(`1 ${i}`);
-          return { text: lines.join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: lines.join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'grid': {
           const R = 32, C = 32, N = R * C;
@@ -1487,7 +1610,7 @@ Vue.component('graphgraph', {
               if (r + 1 < R) edges.push(`${id(r, c)} ${id(r + 1, c)}`);
             }
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'clusters': {
           const K = 15, S = 50, N = K * S;
@@ -1510,7 +1633,7 @@ Vue.component('graphgraph', {
               edges.push(`${u2} ${v2}`);
             }
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'double-ring': {
           const H = 30, N = H * 2;
@@ -1524,7 +1647,7 @@ Vue.component('graphgraph', {
           for (let i = 1; i <= H; i++) {
             if (i % 2 === 1) edges.push(`${i} ${H + i}`);
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'binary-tree': {
           const N = 127;
@@ -1533,7 +1656,7 @@ Vue.component('graphgraph', {
             if (2 * i <= N) edges.push(`${i} ${2 * i}`);
             if (2 * i + 1 <= N) edges.push(`${i} ${2 * i + 1}`);
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'caterpillar': {
           const spine = 40;
@@ -1548,7 +1671,7 @@ Vue.component('graphgraph', {
             }
           }
           const N = nextId - 1;
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'jellyfish': {
           // 密な頭部 + 長い触手
@@ -1582,7 +1705,7 @@ Vue.component('graphgraph', {
             }
           }
           const N = nextId - 1;
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'spider-web': {
           // 同心円リング + 放射状スポーク
@@ -1607,7 +1730,7 @@ Vue.component('graphgraph', {
               edges.push(`${nodeId(r, s)} ${nodeId(r + 1, s)}`);
             }
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'hairball': {
           // 超密なランダムグラフ
@@ -1618,7 +1741,7 @@ Vue.component('graphgraph', {
               if (Math.random() < 0.03) edges.push(`${i} ${j}`);
             }
           }
-          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: true, directed: false, weighted: false, indexed: true };
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         default: return null;
       }
@@ -1701,7 +1824,33 @@ Vue.component('graphgraph', {
         return lines.join('\n');
       };
 
-      const toText = (N, edges) => this.format ? edgesToText(N, edges) : matToText(N, edges);
+      const adjListToText = (N, edges) => {
+        const adj = Array.from({length: N}, () => []);
+        for (const [a, b, w] of edges) {
+          const val = this.weighted ? (w !== undefined ? w : rw()) : undefined;
+          adj[a].push({to: b, w: val});
+          if (!this.directed) adj[b].push({to: a, w: val});
+        }
+        const base = this.indexed ? 1 : 0;
+        const lines = [String(N)];
+        for (let i = 0; i < N; i++) {
+          const vid = i + base;
+          if (this.weighted) {
+            const parts = adj[i].map(e => `${e.to + base} ${e.w}`);
+            lines.push(`${vid} ${adj[i].length}` + (parts.length > 0 ? ' ' + parts.join(' ') : ''));
+          } else {
+            const nbs = adj[i].map(e => e.to + base);
+            lines.push(`${vid} ${adj[i].length}` + (nbs.length > 0 ? ' ' + nbs.join(' ') : ''));
+          }
+        }
+        return lines.join('\n');
+      };
+
+      const toText = (N, edges) => {
+        if (this.format === 'matrix') return matToText(N, edges);
+        if (this.format === 'adjlist') return adjListToText(N, edges);
+        return edgesToText(N, edges);
+      };
 
       // ランダムスパニングツリーを生成（0-indexed）
       const randomTree = (N) => {
@@ -1829,7 +1978,7 @@ Vue.component('graphgraph', {
         }
         default: {
           // random（従来のロジック）
-          if (!this.format) {
+          if (this.format === 'matrix') {
             const mN = (this.randomN > 0) ? Math.min(this.randomN, maxN) : ri(4, 8);
             const mat = Array.from({length: mN}, () => new Array(mN).fill(0));
             for (let i = 0; i < mN; i++) {
@@ -1983,6 +2132,12 @@ Vue.component('graphgraph', {
     }
   },
   mounted: function () {
+    if (this.mini && this.initialData) {
+      if (this.initialDirected) this.directed = true;
+      this.inputText = this.initialData;
+      this.execute();
+      return;
+    }
     this.loadHistory();
     let param = location.search;
     if (param == "") {
@@ -1994,13 +2149,171 @@ Vue.component('graphgraph', {
       let paramWeighted = getParam('weighted');
       let paramDirected = getParam('directed');
       let paramData = getParam('data');
-      this.setPlaceHolder(paramFormat == 'true', paramDirected == 'true', paramWeighted == 'true', paramIndexed == 'true');
+      // 旧 URL 互換: format=true/false → 'normal'/'matrix'
+      if (paramFormat === 'true') paramFormat = 'normal';
+      else if (paramFormat === 'false') paramFormat = 'matrix';
+      this.setPlaceHolder(paramFormat || 'normal', paramDirected == 'true', paramWeighted == 'true', paramIndexed == 'true');
       this.inputText = paramData;
       this.execute();
     }
   }
 })
 
+
+Vue.component('articles', {
+  template: `
+  <div id="articles">
+    <section class="about-section">
+      <h2 class="about-h2">{{ $tl.articles.title }}</h2>
+      <p class="about-p">{{ $tl.articles.description }}</p>
+    </section>
+
+    <div v-if="articleList.length === 0" class="about-section">
+      <p class="about-p" style="color: var(--text-muted);">{{ $tl.articles.empty }}</p>
+    </div>
+
+    <div class="articles-list">
+      <a class="article-card" v-for="a in articleList" :key="a.url" :href="a.url">
+        <span class="article-date">{{ a.date }}</span>
+        <span class="article-contest">{{ a.contest }}</span>
+        <div class="article-body">
+          <span class="article-title">{{ a.title }}</span>
+          <span class="article-tags"><span class="article-tag" v-for="tag in a.tags" :key="tag">{{ tag }}</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+  `,
+  data() {
+    return {
+      articleList: [
+        {
+          title: '有向グラフの DFS で到達可能な頂点を数える',
+          date: '2026-04-18',
+          contest: 'ABC 454',
+          tags: ['DFS', 'Directed Graph'],
+          url: 'articles/abc454c.html',
+        },
+        {
+          title: '連結成分のサイズから友達の数を求める',
+          date: '2026-04-20',
+          contest: 'ABC 350',
+          tags: ['BFS', 'Connected Components'],
+          url: 'articles/abc350d.html',
+        },
+      ],
+    }
+  },
+})
+
+Vue.component('article-abc454c', {
+  template: `
+  <div id="articles">
+    <p class="article-back"><a href="/articles.html">&larr; {{ $tl.nav.articles }}</a></p>
+    <section class="about-section">
+      <h2 class="about-h2">有向グラフの DFS で到達可能な頂点を数える</h2>
+      <div class="article-detail-meta">
+        <span class="article-contest">ABC 454</span>
+        <a href="https://atcoder.jp/contests/abc454/tasks/abc454_c" target="_blank" rel="noopener">C - Straw Millionaire</a>
+        <span class="article-tag">DFS</span>
+        <span class="article-tag">Directed Graph</span>
+      </div>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">考察</h3>
+      <p class="article-detail-p">各交換 (A<sub>i</sub>, B<sub>i</sub>) を A<sub>i</sub> &rarr; B<sub>i</sub> の有向辺とみなすと、頂点 1 から到達可能な頂点の数が答えです。交換しても元の品物は失わないので、辺を辿れる限りすべて入手できます。</p>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">入力例 3 で確認</h3>
+      <p class="article-detail-p">頂点 1 から辿れるのは {1, 2, 3, 5, 6, 7} の 6 つ。頂点 4 へ向かう辺が存在しないため到達できません。</p>
+    </section>
+
+    <graphgraph :mini="true" :initial-directed="true" initial-data="7 8\n2 6\n2 5\n3 6\n1 6\n1 2\n5 6\n2 3\n3 7"></graphgraph>
+
+    <section class="article-section">
+      <h3 class="article-section-h">実装</h3>
+      <p class="article-detail-p">有向グラフを構築し、頂点 1 から DFS します。計算量は O(N + M)。</p>
+      <p class="article-detail-p">
+        <a href="https://atcoder.jp/contests/abc454/submissions/75054487" target="_blank" rel="noopener">提出コード (C++)</a>
+      </p>
+      <pre class="article-detail-code"><code>int main() {
+    int n, m; cin >> n >> m;
+    vector&lt;int&gt; a(m), b(m);
+    for (int i = 0; i &lt; m; i++) cin >> a[i] >> b[i];
+
+    vector&lt;vector&lt;int&gt;&gt; g(n);
+    for (int i = 0; i &lt; m; i++) {
+        g[a[i] - 1].push_back(b[i] - 1);
+    }
+
+    vector&lt;bool&gt; visited(n, false);
+    function&lt;void(int)&gt; dfs = [&amp;](int v) {
+        visited[v] = true;
+        for (int u : g[v]) {
+            if (!visited[u]) dfs(u);
+        }
+    };
+    dfs(0);
+
+    int ans = 0;
+    for (int i = 0; i &lt; n; i++) {
+        if (visited[i]) ans++;
+    }
+    cout &lt;&lt; ans &lt;&lt; endl;
+}</code></pre>
+    </section>
+  </div>
+  `,
+})
+
+Vue.component('article-abc350d', {
+  template: `
+  <div id="articles">
+    <p class="article-back"><a href="/articles.html">&larr; {{ $tl.nav.articles }}</a></p>
+    <section class="about-section">
+      <h2 class="about-h2">連結成分のサイズから友達の数を求める</h2>
+      <div class="article-detail-meta">
+        <span class="article-contest">ABC 350</span>
+        <a href="https://atcoder.jp/contests/abc350/tasks/abc350_d" target="_blank" rel="noopener">D - New Friends</a>
+        <span class="article-tag">BFS</span>
+        <span class="article-tag">Connected Components</span>
+      </div>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">問題概要</h3>
+      <p class="article-detail-p">N 人のユーザーと M 本の友達関係が与えられます。「友達の友達」同士が新たに友達になる操作を繰り返したとき、最終的に新しくできる友達関係の数を求めてください。</p>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">ポイント：連結成分に注目する</h3>
+      <p class="article-detail-p">「友達の友達」操作を繰り返すと、同じ連結成分に属する全員が最終的に互いに友達になります。つまり、各連結成分が完全グラフになります。</p>
+      <p class="article-detail-p">サイズ k の連結成分が完全グラフになると辺の数は <code>k(k-1)/2</code> 本です。すでに存在する辺の数を引けば、新しくできる友達関係の数がわかります。</p>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">アルゴリズム</h3>
+      <p class="article-detail-p">1. グラフを構築し、BFS（または Union-Find）で各連結成分を求める</p>
+      <p class="article-detail-p">2. 各連結成分のサイズ k を求める</p>
+      <p class="article-detail-p">3. 答え = <code>&Sigma; k(k-1)/2</code> - M</p>
+    </section>
+
+    <section class="article-section">
+      <h3 class="article-section-h">入力例で確認</h3>
+      <p class="article-detail-p">以下のグラフで連結成分を確認してみましょう。テキストエリアを自由に編集して試すこともできます。</p>
+    </section>
+
+    <graphgraph :mini="true" initial-data="10 8\n1 2\n2 3\n3 4\n4 5\n6 7\n7 8\n8 9\n9 10"></graphgraph>
+
+    <section class="article-section">
+      <p class="article-detail-p">サイズ 5 の連結成分が 2 つあります。各連結成分の完全グラフの辺数は <code>5&times;4/2 = 10</code> 本。2 つ合わせて 20 本、既存の辺が 8 本なので、新しくできる友達関係は <code>20 - 8 = 12</code> 本です。</p>
+      <p class="article-detail-p">計算量は BFS なら O(N+M)、Union-Find なら O(N&alpha;(N)+M) です。</p>
+    </section>
+  </div>
+  `,
+})
 
 Vue.component('about', {
   template: `
@@ -2646,11 +2959,11 @@ Vue.component('formatCard', {
     </div>
 
     <div class="btn-group">
-      <button v-if="lazyFormat" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">normal</button>
-      <button v-else class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">matrix</button>
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">{{ lazyFormat }}</button>
       <div class="dropdown-menu">
-          <button class="dropdown-item" type="button" v-on:click="lazyFormat = false;"> matrix </button>
-          <button class="dropdown-item" type="button" v-on:click="lazyFormat = true;"> normal </button>
+          <button class="dropdown-item" type="button" v-on:click="lazyFormat = 'normal';"> normal </button>
+          <button class="dropdown-item" type="button" v-on:click="lazyFormat = 'matrix';"> matrix </button>
+          <button class="dropdown-item" type="button" v-on:click="lazyFormat = 'adjlist';"> adjlist </button>
       </div>
     </div>
 
@@ -2663,25 +2976,25 @@ Vue.component('formatCard', {
           <div id="network" style="width: 370px; height: 468px; border: 0px; background: rgb(150, 150, 150);"></div>
         </div>
         <div v-if="canDisplay">
-          <div v-if="!format && !weighted && !directed && !indexed"> <Card0000></Card0000> </div>
-          <div v-if="!format && !weighted && !directed && indexed"> <Card0001></Card0001> </div>
-          <div v-if="!format && !weighted && directed && !indexed"> <Card0010></Card0010> </div>
-          <div v-if="!format && !weighted && directed && indexed"> <Card0011></Card0011> </div>
-          
-          <div v-if="!format && weighted && !directed && !indexed"> <Card0100></Card0100> </div>
-          <div v-if="!format && weighted && !directed && indexed"> <Card0101></Card0101> </div>
-          <div v-if="!format && weighted && directed && !indexed"> <Card0110></Card0110> </div>
-          <div v-if="!format && weighted && directed && indexed"> <Card0111></Card0111> </div>
-          
-          <div v-if="format && !weighted && !directed && !indexed"> <Card1000></Card1000> </div>
-          <div v-if="format && !weighted && !directed && indexed"> <Card1001></Card1001> </div>
-          <div v-if="format && !weighted && directed && !indexed"> <Card1010></Card1010> </div>
-          <div v-if="format && !weighted && directed && indexed"> <Card1011></Card1011> </div>
-          
-          <div v-if="format && weighted && !directed && !indexed"> <Card1100></Card1100> </div>
-          <div v-if="format && weighted && !directed && indexed"> <Card1101></Card1101> </div>
-          <div v-if="format && weighted && directed && !indexed"> <Card1110></Card1110> </div>
-          <div v-if="format && weighted && directed && indexed"> <Card1111></Card1111> </div>
+          <div v-if="format === 'matrix' && !weighted && !directed && !indexed"> <Card0000></Card0000> </div>
+          <div v-if="format === 'matrix' && !weighted && !directed && indexed"> <Card0001></Card0001> </div>
+          <div v-if="format === 'matrix' && !weighted && directed && !indexed"> <Card0010></Card0010> </div>
+          <div v-if="format === 'matrix' && !weighted && directed && indexed"> <Card0011></Card0011> </div>
+
+          <div v-if="format === 'matrix' && weighted && !directed && !indexed"> <Card0100></Card0100> </div>
+          <div v-if="format === 'matrix' && weighted && !directed && indexed"> <Card0101></Card0101> </div>
+          <div v-if="format === 'matrix' && weighted && directed && !indexed"> <Card0110></Card0110> </div>
+          <div v-if="format === 'matrix' && weighted && directed && indexed"> <Card0111></Card0111> </div>
+
+          <div v-if="format !== 'matrix' && !weighted && !directed && !indexed"> <Card1000></Card1000> </div>
+          <div v-if="format !== 'matrix' && !weighted && !directed && indexed"> <Card1001></Card1001> </div>
+          <div v-if="format !== 'matrix' && !weighted && directed && !indexed"> <Card1010></Card1010> </div>
+          <div v-if="format !== 'matrix' && !weighted && directed && indexed"> <Card1011></Card1011> </div>
+
+          <div v-if="format !== 'matrix' && weighted && !directed && !indexed"> <Card1100></Card1100> </div>
+          <div v-if="format !== 'matrix' && weighted && !directed && indexed"> <Card1101></Card1101> </div>
+          <div v-if="format !== 'matrix' && weighted && directed && !indexed"> <Card1110></Card1110> </div>
+          <div v-if="format !== 'matrix' && weighted && directed && indexed"> <Card1111></Card1111> </div>
         </div>
       </div>
     </div>
@@ -2691,13 +3004,13 @@ Vue.component('formatCard', {
   `,
   data: function () {
     return {
-      lazyFormat: true,
+      lazyFormat: 'normal',
       lazyWeighted: false,
       lazyDirected: false,
       lazyIndexed: true,
 
       mathFlag: false,
-      format: true,
+      format: 'normal',
       weighted: false,
       directed: false,
       indexed: true,
@@ -2853,6 +3166,27 @@ Vue.component('howto', {
 5 0 3 0
 0 3 0 8
 0 0 8 0</pre>
+        </div>
+      </div>
+
+      <h3 class="about-h3">{{ $tl.howto.adjlistTitle }}</h3>
+      <p class="about-p">{{ $tl.howto.adjlistDesc }}</p>
+      <div class="howto-example-row">
+        <div class="howto-example-block">
+          <div class="howto-example-label">{{ $tl.howto.adjlistLabels[0] }}</div>
+          <pre class="howto-code">4
+1 2 2 4
+2 2 1 3
+3 2 2 4
+4 2 1 3</pre>
+        </div>
+        <div class="howto-example-block">
+          <div class="howto-example-label">{{ $tl.howto.adjlistLabels[1] }}</div>
+          <pre class="howto-code">4
+1 2 2 5 4 8
+2 2 1 5 3 3
+3 2 2 3 4 8
+4 2 1 8 3 8</pre>
         </div>
       </div>
     </section>
