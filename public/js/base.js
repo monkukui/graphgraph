@@ -16,7 +16,7 @@ function Pair(first, second) {
 }
 
 // ── 多言語対応 ───────────────────────────────────────
-const appState = Vue.observable({ lang: localStorage.getItem('lang') || 'ja' });
+const appState = Vue.observable({ lang: localStorage.getItem('lang') || 'ja', showFunPresets: false });
 
 function updateMeta(lang) {
   var m = translations[lang].meta;
@@ -64,8 +64,10 @@ const translations = {
     viz: { label: '可視化', components: '連結成分', bipartite: '二部グラフ彩色', mst: 'MST' },
     rootedTree: { label: '根付き木', root: '根', show: '表示' },
     howtouseLink: '使い方',
+    advanced: '解析ツール',
+    advancedEmpty: 'グラフを入力すると、解析結果や最短経路などのツールがここに表示されます。',
     presets: { star: 'スター', path: 'パス', cycle: 'サイクル', complete: '完全グラフ', bipartite: '二部グラフ', 'weighted-tree': '重み付き木', 'weighted-graph': '重み付きグラフ', dag: 'DAG' },
-    funPresets: { 'big-star': '巨大スター', grid: 'グリッド', clusters: 'クラスタ', 'binary-tree': '二分木', caterpillar: 'カタピラ', jellyfish: 'クラゲ', 'spider-web': '蜘蛛の巣', hairball: '毛玉' },
+    funPresets: { 'big-star': '巨大スター', grid: 'グリッド', clusters: 'クラスタ', 'binary-tree': '二分木', caterpillar: 'カタピラ', jellyfish: 'クラゲ', 'spider-web': '蜘蛛の巣', hairball: '毛玉', 'fractal-tree': 'フラクタル木', torus: 'ドーナツ', barbell: 'バーベル' },
     about: {
       whatTitle: 'GRAPH × GRAPH とは',
       whatBody: '競技プログラミングにおけるグラフ問題の入力例を、ブラウザ上でリアルタイムに可視化するツールです。\nAtCoder などのコンテスト中に入力例をそのまま貼り付けるだけで、グラフの構造を即座に確認できます。',
@@ -180,6 +182,11 @@ const translations = {
         { num: '3', title: 'グラフを確認する', desc: 'グラフ情報パネルで頂点数・辺数・グラフの種別が自動表示されます。' },
       ],
       howtoMore: '詳しい使い方はこちら',
+      toolsTitle: 'その他のツール',
+      tools: [
+        { name: '二分探索木 ビジュアライザ', href: '/bst.html' },
+        { name: 'B木 ビジュアライザ', href: '/btree.html' },
+      ],
     },
     articles: {
       title: 'AtCoder グラフ問題 解説',
@@ -227,8 +234,10 @@ const translations = {
     viz: { label: 'Visualize', components: 'Components', bipartite: 'Bipartite Color', mst: 'MST' },
     rootedTree: { label: 'Rooted Tree', root: 'Root', show: 'Show' },
     howtouseLink: 'How to use',
+    advanced: 'Analysis Tools',
+    advancedEmpty: 'Enter a graph to see analysis results, shortest paths, and more.',
     presets: { star: 'Star', path: 'Path', cycle: 'Cycle', complete: 'Complete', bipartite: 'Bipartite', 'weighted-tree': 'Weighted Tree', 'weighted-graph': 'Weighted Graph', dag: 'DAG' },
-    funPresets: { 'big-star': 'Big Star', grid: 'Grid', clusters: 'Clusters', 'binary-tree': 'Binary Tree', caterpillar: 'Caterpillar', jellyfish: 'Jellyfish', 'spider-web': 'Spider Web', hairball: 'Hairball' },
+    funPresets: { 'big-star': 'Big Star', grid: 'Grid', clusters: 'Clusters', 'binary-tree': 'Binary Tree', caterpillar: 'Caterpillar', jellyfish: 'Jellyfish', 'spider-web': 'Spider Web', hairball: 'Hairball', 'fractal-tree': 'Fractal Tree', torus: 'Torus', barbell: 'Barbell' },
     about: {
       whatTitle: 'What is GRAPH × GRAPH?',
       whatBody: 'A browser-based tool for visualizing graph problems in competitive programming.\nJust paste an input example from an AtCoder contest and instantly see the graph structure.',
@@ -343,6 +352,11 @@ const translations = {
         { num: '3', title: 'Read the graph', desc: 'The info panel shows vertex/edge counts and auto-detected graph type.' },
       ],
       howtoMore: 'See full guide',
+      toolsTitle: 'Other Tools',
+      tools: [
+        { name: 'BST Visualizer', href: '/bst.html' },
+        { name: 'B-Tree Visualizer', href: '/btree.html' },
+      ],
     },
     articles: {
       title: 'AtCoder Graph Problem Articles',
@@ -364,6 +378,7 @@ Vue.mixin({
   computed: {
     $tl() { return translations[appState.lang]; },
     $lang() { return appState.lang; },
+    $showFunPresets() { return appState.showFunPresets; },
   },
   methods: {
     $setLang(lang) {
@@ -463,7 +478,7 @@ Vue.component('navbar', {
 Vue.component('top', {
   template: `
   <div id="top">
-    <div id="logo"><img :src="image" alt="logo" width="160" height="98"></div>
+    <div id="logo" @click="toggleFun" style="cursor: pointer;"><img :src="image" alt="logo" width="160" height="98"></div>
     <div id="hoge">ver.{{ version }}</div>
     <div class="dropdown-divider" style="width:100%; margin-top: 16px;"></div>
   </div>
@@ -478,6 +493,11 @@ Vue.component('top', {
   computed: {
     image() {
       return 'images/' + this.logoname + '.png'
+    }
+  },
+  methods: {
+    toggleFun() {
+      appState.showFunPresets = !appState.showFunPresets;
     }
   }
 })
@@ -511,12 +531,7 @@ Vue.component('graphgraph', {
       </transition>
 
       <template v-if="!mini">
-      <div class="preset-row">
-        <span class="preset-label" @click="funClickCount++; if(funClickCount >= 5) showFunPresets = true;" style="cursor: default;">{{ $lang === 'ja' ? 'サンプル:' : 'Preset:' }}</span>
-        <button v-for="p in presetTypes" :key="p" class="btn-preset" v-on:click="loadPreset(p)">{{ $tl.presets[p] }}</button>
-      </div>
-      <div class="preset-row fun-preset-row" v-if="showFunPresets">
-        <span class="preset-label" style="opacity:0.6;">{{ $lang === 'ja' ? '???' : '???' }}</span>
+      <div class="preset-row fun-preset-row" v-if="$showFunPresets">
         <button v-for="p in funPresetTypes" :key="p" class="btn-preset btn-preset-fun" v-on:click="loadPreset(p)">{{ $tl.funPresets[p] }}</button>
       </div>
 
@@ -614,6 +629,14 @@ Vue.component('graphgraph', {
         <button class="btn-random-gen" v-on:click="generateRandom">{{ $tl.randomGen.generate }}</button>
       </div>
 
+      <button class="btn-advanced-toggle" :class="{ 'is-open': showAdvanced }" @click="showAdvanced = !showAdvanced">
+        {{ $tl.advanced }} {{ showAdvanced ? '▲' : '▼' }}
+      </button>
+
+      <div v-show="showAdvanced" class="advanced-section">
+      <div v-if="!graphInfo.visible" class="advanced-empty">
+        {{ $tl.advancedEmpty }}
+      </div>
       <div v-if="graphInfo.visible" class="graph-info-panel">
         <span class="info-item">{{ $tl.info.vertices }} <span class="info-value">{{ graphInfo.vertices }}</span></span>
         <span class="info-item">{{ $tl.info.edges }} <span class="info-value">{{ graphInfo.edges }}</span></span>
@@ -672,6 +695,7 @@ Vue.component('graphgraph', {
       <div v-if="graphInfo.isDAG && graphInfo.topoOrder" class="topo-order">
         <span class="topo-label">{{ $tl.topo }}</span>
         <span v-for="(node, i) in graphInfo.topoOrder" :key="i" class="topo-node">{{ node }}<span v-if="i < graphInfo.topoOrder.length - 1" class="topo-arrow"> → </span></span>
+      </div>
       </div>
 
       <div class="history-panel">
@@ -766,9 +790,10 @@ Vue.component('graphgraph', {
 
       // サンプルグラフのプリセット（クリックごとにランダム生成）
       presetTypes: ['star', 'path', 'cycle', 'complete', 'bipartite', 'weighted-tree', 'weighted-graph', 'dag'],
-      funPresetTypes: ['big-star', 'grid', 'clusters', 'binary-tree', 'caterpillar', 'jellyfish', 'spider-web', 'hairball'],
+      funPresetTypes: ['big-star', 'grid', 'clusters', 'binary-tree', 'caterpillar', 'jellyfish', 'spider-web', 'hairball', 'fractal-tree', 'torus', 'barbell'],
       showFunPresets: false,
       funClickCount: 0,
+      showAdvanced: false,
     }
   },
 
@@ -1670,7 +1695,7 @@ Vue.component('graphgraph', {
           return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
         }
         case 'clusters': {
-          const K = 15, S = 50, N = K * S;
+          const K = 10, S = 50, N = K * S;
           const edges = [];
           for (let k = 0; k < K; k++) {
             const base = k * S + 1;
@@ -1796,6 +1821,65 @@ Vue.component('graphgraph', {
           for (let i = 1; i <= N; i++) {
             for (let j = i + 1; j <= N; j++) {
               if (Math.random() < 0.03) edges.push(`${i} ${j}`);
+            }
+          }
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
+        }
+        case 'torus': {
+          // グリッドの上下・左右をラップしたトーラスグラフ
+          const R = 16, C = 16, N = R * C;
+          const id = (r, c) => (r % R) * C + (c % C) + 1;
+          const edges = [];
+          for (let r = 0; r < R; r++) {
+            for (let c = 0; c < C; c++) {
+              edges.push(`${id(r, c)} ${id(r, (c + 1) % C)}`);
+              edges.push(`${id(r, c)} ${id((r + 1) % R, c)}`);
+            }
+          }
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
+        }
+        case 'fractal-tree': {
+          // 再帰的に分岐する木構造
+          const branch = 3;
+          const depth = 5;
+          const edges = [];
+          let nextId = 1;
+          function buildFractal(parent, d) {
+            if (d > depth) return;
+            for (let b = 0; b < branch; b++) {
+              nextId++;
+              edges.push(`${parent} ${nextId}`);
+              buildFractal(nextId, d + 1);
+            }
+          }
+          buildFractal(1, 1);
+          const N = nextId;
+          return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
+        }
+        case 'barbell': {
+          // 2つの完全グラフを1本のパスで繋ぐ
+          const cliqueSize = 15;
+          const pathLen = 10;
+          const N = cliqueSize * 2 + pathLen;
+          const edges = [];
+          // 完全グラフ1: ノード 1..cliqueSize
+          for (let i = 1; i <= cliqueSize; i++) {
+            for (let j = i + 1; j <= cliqueSize; j++) {
+              edges.push(`${i} ${j}`);
+            }
+          }
+          // パス: ノード cliqueSize+1..cliqueSize+pathLen
+          const pathStart = cliqueSize + 1;
+          edges.push(`${cliqueSize} ${pathStart}`); // clique1 -> path
+          for (let i = pathStart; i < pathStart + pathLen - 1; i++) {
+            edges.push(`${i} ${i + 1}`);
+          }
+          // 完全グラフ2: ノード cliqueSize+pathLen+1..N
+          const c2Start = cliqueSize + pathLen + 1;
+          edges.push(`${pathStart + pathLen - 1} ${c2Start}`); // path -> clique2
+          for (let i = c2Start; i <= N; i++) {
+            for (let j = i + 1; j <= N; j++) {
+              edges.push(`${i} ${j}`);
             }
           }
           return { text: [`${N} ${edges.length}`, ...edges].join('\n'), format: 'normal', directed: false, weighted: false, indexed: true };
@@ -2526,6 +2610,14 @@ Vue.component('index-content', {
       <p class="about-p" style="margin-top: 12px;">
         <a href="howtouse.html">{{ $tl.indexContent.howtoMore }}</a>
       </p>
+    </section>
+
+    <section class="about-section" style="margin-top: 8px;">
+      <h2 class="about-h2" style="font-size: 0.95rem;">{{ $tl.indexContent.toolsTitle }}</h2>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a v-for="t in $tl.indexContent.tools" :key="t.href" :href="t.href"
+           style="font-size: 0.82rem; color: var(--primary);">{{ t.name }}</a>
+      </div>
     </section>
   </div>
   `,
